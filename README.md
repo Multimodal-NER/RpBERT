@@ -10,22 +10,6 @@ RpBERT: A Text-image Relationship Propagation Based BERT Model  for Multimodal N
 >- pandas==0.20.3
 
 **(pip install -r requirements.txt)**
-### word embeddings download links
->- ACE04/05 : [glove 100d](https://drive.google.com/open?id=1qDmFF0bUKHt5GpANj7jCUmDXgq50QJKw)
->- GENIA : [wikipedia-pubmed-and-PMC-w2v 200d](http://evexdb.org/pmresources/vec-space-models/wikipedia-pubmed-and-PMC-w2v.bin)
-
-Before running the code, please put word embeddings at the directory "/model/word2vec/".
-
-### Data format
-
-R7 - 57 reporter cells , on the other hand , signaled induced activity of the lytic origin of EBV replication ( ori Lyt ) .
-
-NN NN NN NN NNS , IN DT JJ NN , VBD VBN NN IN DT JJ NN IN NN NN ( NN NN ) .
-
-0,5 G#cell_line|16,21 G#DNA|22,24 G#DNA
-
-The first line is a sentence. The second line is POS tags. The third line is the location (start,end] and type of entity separated by "|". For example, "0,5 G#cell_line" denotes "R7 - 57 reporter cells"  is a "cell_line".
-
 
 ### Configuration
 All configuration are listed in config.py. Please verify parameters before running the codes.
