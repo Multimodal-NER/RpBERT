@@ -133,23 +133,15 @@ def main():
 
         myvlbert = ResNetVLBERT(config)
         pretrained_bert_model = torch.load('/home/data/datasets/embeddings/bert/bert-base-uncased/pytorch_model.bin')
-        pretrained_vlbert_model = torch.load('/home/data/wjq/vlbert/model/pretrained_model/vl-bert-base-e2e.model')[
-            'state_dict']
         new_state_dict = myvlbert.state_dict()
         miss_keys = []
         for k in new_state_dict.keys():
             print(k)
             key = k.replace('vlbert', 'bert') \
                 .replace('LayerNorm.weight', 'LayerNorm.gamma') \
-                .replace('LayerNorm.bias', 'LayerNorm.beta') \
-                # .replace('word_embeddings', 'embeddings.word_embeddings')\
-            # .replace('position_embeddings', 'position_embeddings.weight')\
-            # .replace('embedding_LayerNorm', 'embeddings.LayerNorm')
-            keyvl = 'module.' + k
+                .replace('LayerNorm.bias', 'LayerNorm.beta')
             if key in pretrained_bert_model.keys():
                 new_state_dict[k] = pretrained_bert_model[key]
-            elif keyvl in pretrained_vlbert_model.keys():
-                new_state_dict[k] = pretrained_vlbert_model[keyvl]
             else:
                 miss_keys.append(k)
         if len(miss_keys) > 0:
