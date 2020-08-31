@@ -20,14 +20,6 @@ torch.cuda.set_device(device_id)
 flair.device = torch.device('cuda:%d' % device_id)
 
 
-def setup_seed(seed):
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    np.random.seed(seed)
-    random.seed(seed)
-    torch.backends.cudnn.deterministic = True
-
-
 def parse_arguments():
     parser = argparse.ArgumentParser(
         description='Argument Parser for MNER')
@@ -181,5 +173,4 @@ def main():
 
 
 if __name__ == '__main__':
-    setup_seed(1024)
     main()
