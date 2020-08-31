@@ -16,16 +16,4 @@ All configuration are listed in config.py. Please verify parameters before runni
 
 ### Usage
 #### Training
->- python process_data.py
->- python train.py 
-
-If you run TCSR without SRN network, please set  self.if_span_te = False in config.py.
-
-If you run BERT for contextual network, please set  self.use_bert = True in config.py. 
-
-#### Testing
->- python test.py
-
-### Test Best Model:
-The best model is located on "./model" path. You can change the "test_model_path" to choose model and run
-"python test.py" to evaluate it.
+>- python main.py 
