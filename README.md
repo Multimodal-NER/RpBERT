@@ -12,7 +12,7 @@ RpBERT: A Text-image Relationship Propagation Based BERT Model  for Multimodal N
 **(pip install -r requirements.txt)**
 
 ### Configuration
-All configuration are listed in config.py. Please verify parameters before running the codes.
+All configuration are listed in /cfgs/. Please verify parameters before running the codes.
 
 ### Usage
 #### Training
