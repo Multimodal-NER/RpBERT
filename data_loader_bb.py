@@ -213,54 +213,6 @@ class DataLoader:
 
         return [datasplit, sentences,  img_id, sent_maxlen, word_maxlen, num_sentence, ifpairs]
 
-    # def vocab_bulid(self, sentences):
-    #     """
-    #     input:
-    #         sentences list,
-    #         the element of the list is (word, label) pair.
-    #     output:
-    #         some dictionaries.
-    #
-    #     """
-    #     words = []
-    #     chars = []
-    #     labels = []
-    #
-    #     cnt =0
-    #     for sentence in sentences:
-    #         for word_label in sentence:
-    #             # if word_label[0].lower() in self.word2vec_model:
-    #             #     words.append(word_label[0])
-    #             # else: cnt+=1
-    #             words.append(word_label[0])
-    #             labels.append(word_label[1])
-    #     for sentence in sentences[:97558]:
-    #         for word_label in sentence:
-    #             for char in word_label[0]:
-    #                 chars.append(char)
-    #     print("!!!!!!!!!!",cnt)
-    #     word_counts = Counter(words)
-    #     vocb_inv = [x[0] for x in word_counts.most_common()]
-    #     vocb = {x: i + 3 for i, x in enumerate(vocb_inv)}
-    #     vocb['<PAD>'] = 0
-    #     vocb['<UNK>'] = 1  # Add  <UNK> to vocb
-    #     # vocb['<SOS>'] = 2  # Add  <SOS> to vocb
-    #     vocb['<EOS>'] = 2  # Add  <EOS> to vocb
-    #     id_to_vocb = {i: x for x, i in vocb.items()}
-    #
-    #     char_counts = Counter(chars)
-    #     vocb_inv_char = [x[0] for x in char_counts.most_common()]
-    #     vocb_char = {x: i + 1 for i, x in enumerate(vocb_inv_char)}
-    #     # self.params.char_vocab_size = len(vocb_char)
-    #     # print('char_vocab_size:', self.params.char_vocab_size)
-    #
-    #     labels_counts = Counter(labels)
-    #     print('labels_counts', len(labels_counts))
-    #     print(labels_counts)
-    #     labelVoc_inv, labelVoc = self.label_index(labels_counts)
-    #     print('labelVoc', labelVoc)
-    #
-    #     return [id_to_vocb, vocb, vocb_inv, vocb_char, vocb_inv_char, labelVoc, labelVoc_inv]
 
     @staticmethod
     def label_index(labels_counts):

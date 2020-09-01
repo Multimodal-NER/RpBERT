@@ -19,7 +19,7 @@ from cfgs.config import config, update_config
 from MM_pretrain.resnet_vlbert import ResNetVLBERT
 
 
-device_id = 1
+device_id = 2
 torch.cuda.set_device(device_id)
 flair.device = torch.device('cuda:%d' % device_id)
 
@@ -80,7 +80,7 @@ def parse_arguments():
     parser.add_argument("--validate_every", dest="validate_every", type=int, default=1)
     parser.add_argument("--mode", dest="mode", type=int, default=1)
     parser.add_argument("--model_dir", dest="model_dir", type=str, default=MODEL_DIR)
-    parser.add_argument("--model_file_name", dest="model_file_name", type=str, default="epoch18_f1_0.87156.pth")
+    parser.add_argument("--model_file_name", dest="model_file_name", type=str, default="path to your model weights")
     parser.add_argument("--sent_maxlen", dest="sent_maxlen", type=int, default=35)
     parser.add_argument("--word_maxlen", dest="word_maxlen", type=int, default=41)
     parser.add_argument("--regions_in_image", dest="regions_in_image", type=int, default=49)
@@ -126,7 +126,7 @@ def main():
 
         embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
         model = MNER(params, embeddings, pre_model)
-        model_file_path = os.path.join(params.model_dir, params.model_file_name)
+        model_file_path = params.model_file_name
         model.load_state_dict(torch.load(model_file_path))
         if torch.cuda.is_available():
             model = model.cuda()
