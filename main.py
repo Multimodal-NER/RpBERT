@@ -10,7 +10,6 @@ import random
 import numpy as np
 import torch
 import flair
-
 from cfgs.config import config, update_config
 from MM_pretrain.resnet_vlbert import ResNetVLBERT
 
@@ -54,7 +53,6 @@ def parse_arguments():
     parser.add_argument("--pre_word2vec_model", dest="pre_word2vec_model", type=str,
                         default='/media/iot538/a73dbfc5-a8a0-4021-a841-3b7d7f3fd964/mnt/wfs/data/glove100.txt')
     parser.add_argument("--word2vec_model", dest="word2vec_model", type=str, default='/home/iot538/Documents/syx/cr/40Wtweet_200dim.model')
-
     #parameters for pretrain model
     parser.add_argument("--pretrain_load", dest="pretrain_load", type=int, default=1)
     parser.add_argument("--pre_embedding_dimension_char", dest="pre_embedding_dimension_char", type=int, default=25)
@@ -66,7 +64,6 @@ def parse_arguments():
     parser.add_argument("--pretrain_model", dest="pretrain_model", type=str,
                         default='/home/data/wjq_new/pretrain_model/VLRB_0.5/model_pre_100k_hidden_256/epoch3_f1_0.86284.pth')
     MODEL_DIR = '/home/data/wjq_new/ner/models_addpre/'
-
     parser.add_argument("--hidden_dimension", dest="hidden_dimension", type=int, default=512)
     # parser.add_argument("--hidden_dimension_char", dest="hidden_dimension_char", type=int, default=30)
     #for weighted_sum --hidden_dimension_char
@@ -81,7 +78,6 @@ def parse_arguments():
     parser.add_argument("--use_img", dest="use_img", type=int, default=0)
     parser.add_argument("--pre_use_img", dest="pre_use_img", type=int, default=1)
     parser.add_argument("--use_char_cnn", dest="use_char_cnn", type=int, default=0)
-
     parser.add_argument("--att_head", dest="atthead", type=float, default=1)
     parser.add_argument("--batch_size", dest="batch_size", type=int, default=4)
     parser.add_argument("--lr", dest="lr", type=float, default=5e-5)

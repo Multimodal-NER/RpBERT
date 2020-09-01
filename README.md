@@ -8,7 +8,6 @@ RpBERT: A Text-image Relationship Propagation Based BERT Model  for Multimodal N
 >- gensim==3.8.0 
 >- numpy==1.18.3
 >- torchcrf==1.0.4
-
 **(pip install -r requirements.txt)**
 
 ### Configuration
