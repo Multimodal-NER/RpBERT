@@ -13,7 +13,6 @@ import flair
 from cfgs.config import config, update_config
 from MM_pretrain.resnet_vlbert import ResNetVLBERT
 
-
 device_id = 2
 torch.cuda.set_device(device_id)
 flair.device = torch.device('cuda:%d' % device_id)

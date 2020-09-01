@@ -16,3 +16,6 @@ All configuration are listed in /cfgs/. Please verify parameters before running 
 ### Usage
 #### Training
 >- python main.py 
+
+#### Testing
+>- python test.py
