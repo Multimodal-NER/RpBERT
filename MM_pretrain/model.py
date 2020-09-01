@@ -20,7 +20,7 @@ def gelu_new(x):
 
 
 class MM_pretrain(torch.nn.Module):
-    def __init__(self, params, myvlbert, size_of_vocab=None, pretrained_weight = None):
+    def __init__(self, params, myvlbert):
         super(MM_pretrain, self).__init__()
         self.params = params
         self.mybert = myvlbert
