@@ -16,6 +16,23 @@ All configuration are listed in /cfgs/. Please verify parameters before running 
 
 ### Data
 
+```
+datasets/
+├── fudan/
+│   ├──ner_img/
+│   ├── train
+│   ├── dev
+│   └── test
+├── snap/
+│   ├──ner_img/
+│   ├── train
+│   ├── dev
+│   └── test
+└── bloomberg/
+    ├──rel_img/
+    └──textimage-data-image
+```
+
 ### Pre-trained Models
 ```
 pretrained_model/

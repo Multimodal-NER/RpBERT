@@ -124,7 +124,7 @@ class DataLoader:
     def load_data(self):
         print('calculating vocab  ulary...')
         datasplit, sentences, img_id, sent_maxlen, word_maxlen, num_sentence,  ifpairs = self.load_sentence(
-            'IMGID', self.params.pre_split_file, 'twitter100k_relation_image', 'textimage-data-image')
+            'IMGID', self.params.pre_split_file, 'textimage-data-image')
         # print(sent_maxlen)
         # id_to_vocb, vocb, vocb_inv, vocb_char, vocb_inv_char, labelVoc, labelVoc_inv = self.vocab_bulid(sentences)
         x, img_id, y = self.pad_sequence(sentences, img_id,
@@ -132,7 +132,7 @@ class DataLoader:
         return [sentences, datasplit, x,img_id, y, num_sentence,
                 ifpairs]
 
-    def load_sentence(self, IMAGEID, tweet_data_dir, train_phase1_name, train_phase2_name):
+    def load_sentence(self, IMAGEID, tweet_data_dir, file_name):
         """
         read the word from doc, and build sentence. every line contain a word and it's tag
         every sentence is split with a empty line. every sentence begain with an "IMGID:num"
@@ -149,7 +149,7 @@ class DataLoader:
         # mask_object = []
         ifpairs =  []
         # img_feature = []
-        for fname in (train_phase2_name, ):
+        for fname in (file_name,):
             datasplit.append(len(img_id))
             with open(os.path.join(tweet_data_dir, fname), 'r', encoding='utf-8') as file:
                 for line in file:
