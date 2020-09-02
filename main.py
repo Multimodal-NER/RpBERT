@@ -26,16 +26,8 @@ def parse_arguments():
                         default='/home/data/syx/twitter/twitter100k/img_feature/')
     parser.add_argument("--pre_image_obj_features_dir", dest="pre_image_obj_features_dir", type=str,
                         default='/media/iot538/a73dbfc5-a8a0-4021-a841-3b7d7f3fd964/mnt/wfs/data/twitter100k/twitter100k_image/')
-    # parser.add_argument("--image_features_dir", dest="image_features_dir", type=str,
-    #                     default='/mnt/wfs/data/twitter10k/npyimg/')
     parser.add_argument("--pre_split_file", dest="pre_split_file", type=str, default='/home/data/syx/twitter/twitter100k/')
 
-    # parser.add_argument("--image_features_dir", dest="image_features_dir", type=str,
-    #                     default='/home/data/syx/twitter/aaai/img_obj/')
-    # parser.add_argument("--image_obj_features_dir", dest="image_obj_features_dir", type=str,
-    #                     default='/home/data/syx/twitter/aaai/img_obj/')
-    # parser.add_argument("--caption_file", dest="caption_file", type=str, default='///')
-    # parser.add_argument("--split_file", dest="split_file", type=str, default='/mnt/wfs/dataz'z'z/mul/unk/')
     # parser.add_argument("--split_file", dest="split_file", type=str,
     #                         default='/home/data/syx/twitter/aaai/')
     # parser.add_argument("--image_obj_features_dir", dest="image_obj_features_dir", type=str,

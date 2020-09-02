@@ -35,13 +35,13 @@ class Evaluator:
                                                relation=relation_, mode="test")  # seq_len * bs * labels
             pre_test_label_index = crf.decode(emissions)  # bs * seq_len
             words.append(x)
-            # words.append(x.cpu().numpy())
+
             labels.append(y.cpu().numpy().squeeze(0))
-            # labels.append(y.cpu().numpy())
+
             labels_pred.append(pre_test_label_index[0])
-            # labels_pred.append(pre_test_label_index)
+
             sent_lens.append(lens.cpu().numpy()[0])
-            # sent_lens.append(lens.cpu().numpy())
+
 
         return self.evaluate(labels_pred, labels, words, sent_lens)
 

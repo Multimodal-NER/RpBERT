@@ -200,10 +200,7 @@ class DataLoader:
         sentence = []
         sent_maxlen = 0
         word_maxlen = 0
-        obj_features = []
-        # img_feature = []
         datasplit = []
-        # mask_object = []
 
         for fname in (train_name, dev_name, test_name):
             datasplit.append(len(img_id))
@@ -321,8 +318,6 @@ class DataLoader:
                     w_id.append(tokenizer.vocab['[MASK]'])
                 st.add_token(word_label[0])
                 y_id.append(labelVoc[word_label[1]])
-            # print(w_id)
-            # print(sentence)
             x.append(w_id)
             x_flair.append(st)
             y.append(y_id)
@@ -331,6 +326,5 @@ class DataLoader:
         x = self.pad_sequences(x, sent_maxlen)
 
         y = np.asarray(y)
-        # mask_object = np.asarray(mask_object)
 
         return [x, x_flair, y]

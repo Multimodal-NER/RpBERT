@@ -3,11 +3,6 @@ import torch.utils.data
 import os
 from collections import Counter
 import numpy as np
-import gensim
-from gensim.models import word2vec
-import traceback
-# from  MM_pretrain.resnet import trans_image
-import random
 import torchvision.transforms as transforms
 from PIL import Image
 from pytorch_pretrained_bert import BertTokenizer
@@ -42,31 +37,27 @@ class CustomDataSet(torch.utils.data.TensorDataset):
     def __getitem__(self, idx):
         x = self.x[self.s_idx + idx]
         y = self.y[self.s_idx + idx]
-        # img_x = self.img_x[self.s_idx + idx]
+
         img_id = self.img_id[self.s_idx + idx]
         path = os.path.join(self.params.pre_image_obj_features_dir, img_id+'.jpg')
         image = Image.open(path)
         if image.mode != 'RGB':
             image = image.convert('RGB')
-        # print(i)
+
         image = transform(image)
-        # image = torch.unsqueeze(image, 0)
         obj_x = np.array(image)
-        # mask_object = self.mask_object[self.s_idx + idx]
+
         ifpairs = self.ifpairs[self.s_idx + idx]
         return x, y, obj_x, ifpairs
 
     def collate(self, batch):
         x = np.array([x[0] for x in batch])
         y = np.array([x[1] for x in batch])
-        # print("xxxxxxx\n", x)
-        # print("yyyyyyyyy\n", y)
-        # img_x = np.array([x[2] for x in batch])
+
         obj_x = np.array([x[2] for x in batch])
-        # mask_object = np.asarray(x[4] for x in batch)
-        # mask_object = np.array([x[5] for x in batch])
+
         ifpairs = np.array([x[3] for x in batch])
-        # bool_mask = x == 0
+
         bool_mask = y == 0
         mask = 1 - bool_mask.astype(np.int)
 
@@ -130,25 +121,6 @@ class DataLoader:
                                                              collate_fn=dataset_train_phase1.collate,
                                                              shuffle=True, **kwargs)
 
-        # dataset_train_phase2 = CustomDataSet(params, self.x, self.x_c,self.img_id, self.y,  self.ifpairs, self.datasplit[1], self.datasplit[2])
-        # self.train_phase2_loader = torch.utils.data.DataLoader(dataset_train_phase2,
-        #                                                        batch_size=self.params.batch_size,
-        #                                                        collate_fn=dataset_train_phase2.collate,
-        #                                                        shuffle=True, **kwargs)
-        # self.val_data_loader = torch.utils.data.DataLoader(dataset_val,
-        #                                                    batch_size=1,
-        #                                                    collate_fn=dataset_val.collate,
-        #                                                    shuffle=False, **kwargs)
-        # dataset_test = CustomDataSet(params, self.x, self.x_c, self.img_x, self.y, self.datasplit[2], self.datasplit[3])
-        # self.test_data_loader = torch.utils.data.DataLoader(dataset_test,
-        #                                                     batch_size=1,
-        #                                                     collate_fn=dataset_test.collate,
-        #                                                     shuffle=False, **kwargs)
-
-        # if self.params.word2vec_model != '':
-        #     self.word2vec_model = gensim.models.KeyedVectors.load_word2vec_format(self.params.word2vec_model)
-        #     # model = word2vec.Word2Vec.load(self.params.word2vec_model)
-
     def load_data(self):
         print('calculating vocab  ulary...')
         datasplit, sentences, img_id, sent_maxlen, word_maxlen, num_sentence,  ifpairs = self.load_sentence(
@@ -196,9 +168,7 @@ class DataLoader:
                             sentence.append(line.split('\t'))
                             word_maxlen = max(word_maxlen, len(str(line.split()[0])))
             print(1)
-            # sentences.append(sentence)
-        # datasplit.append(int(len(img_id)/2))
-        # datasplit.append(103576)
+
         datasplit.append(len(img_id))
         num_sentence = len(sentences)
 
@@ -285,9 +255,6 @@ class DataLoader:
 
         y = self.pad_sequences(y, sent_maxlen)
         x = self.pad_sequences(x, sent_maxlen)
-
-
         x = np.asarray(x)
         y = np.asarray(y)
-        # mask_object = np.asarray(mask_object)
         return [x, img_id, y]

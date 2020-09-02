@@ -69,7 +69,7 @@ class Trainer:
         paras_new = []
         for k, v in paras.items():
             if 'pre_resnet' in k or 'vlbert' in k:
-                paras_new += [{'params': [v], 'lr': 1e-5}]
+                paras_new += [{'params': [v], 'lr': 1e-6}]
             else:
                 paras_new += [{'params': [v], 'lr': 1e-4}]
         optimizer = torch.optim.Adam(paras_new, weight_decay=self.params.wdecay)

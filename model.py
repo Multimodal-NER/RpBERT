@@ -40,58 +40,23 @@ class MNER(torch.nn.Module):
     def __init__(self, params,  embeddings, pretrain_model, pretrained_weight=None, num_of_tags=10):
         super(MNER, self).__init__()
         self.params = params
-        # self.glove_embed_ec = Encoder(params, pretrained_weight)
+
         self.embeddings = embeddings
         self.layer_indexes = [-1]
         self.pooling_operation = "first"
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         self.name = 'bert-base-uncased'
-        # self.myvlbert.fix_params()
 
-        # if self.params.use_char_cnn == 1:
-        #     input_embeddding_size = params.embedding_dimension + params.embedding_dimension_char
-        # else:
-        #     input_embeddding_size = params.embedding_dimension + params.embedding_dimension_char*2
         self.input_embeddding_size = 768 + embeddings.embedding_length
-
-        # if self.params.pretrain_load == 1:
-        #     self.pretrain_model = pretrain_model
-        #     lstm_input_size = 2 * params.pre_hidden_dimension
-        #     if params.cat_h_e == 1:
-        #         lstm_input_size += input_embeddding_size
-        # else:
-        #     lstm_input_size = input_embeddding_size
         lstm_input_size = self.input_embeddding_size
         if self.params.pretrain_load == 1:
             self.pretrain_model = pretrain_model
-        # self.pre_resnet = resnet34()
-        # if self.params.pretrain_load != 1:
-        #     self.pre_resnet.load_state_dict(torch.load('/home/iot538/Documents/syx/cr/data/resnet34-333f7ec4.pth'))
-        #     print('load resnet34 pretrained model')
-        #     for param in self.pre_resnet.parameters():
-        #         param.required_grad = False
-        # self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        # self.visual2lstm = nn.Linear(in_features=params.visual_feature_dimension, out_features=lstm_input_size)
-        # self.hidden2lstm0 = nn.Linear(in_features=params.pre_hidden_dimension,
-        #                               out_features=params.pre_embedding_dimension)
-        # self.img2visual = nn.Linear(49 * self.params.visual_feature_dimension, self.params.visual_feature_dimension)
-        # self.image2lstm = nn.Linear(params.visual_feature_dimension, lstm_input_size)
         self.dropout = nn.Dropout(params.dropout)
 
         self.lstm = nn.LSTM(input_size=lstm_input_size, hidden_size=params.hidden_dimension // 2,
                             num_layers=params.n_layers, bidirectional=True)
 
         self.projection = nn.Linear(in_features=params.hidden_dimension, out_features=num_of_tags)
-
-        # self.lsm = nn.LogSoftmax(dim=2)
-
-    # def train(self, mode=True):
-    #     super(MNER, self).train()
-    #     self.mybert.train()
-    #
-    # def eval(self):
-    #     super(MNER, self).eval()
-    #     self.mybert.eval()
 
     def _convert_sentences_to_features(
         self, sentences, max_sequence_length: int
@@ -181,13 +146,6 @@ class MNER(torch.nn.Module):
             # get aggregated embeddings for each BERT-subtoken in sentence
             subtoken_embeddings = []
             for token_index, _ in enumerate(feature.tokens):
-                # all_layers = []
-                # for layer_index in self.layer_indexes:
-                #     layer_output = all_encoder_layers[int(layer_index)][
-                #         sentence_index
-                #     ]
-                #     all_layers.append(layer_output[token_index])
-
                 subtoken_embeddings.append(all_encoder_layers[sentence_index][token_index])
 
             # get the current sentence object
@@ -216,12 +174,6 @@ class MNER(torch.nn.Module):
         return attention_probs
 
     def forward(self, sentences, x_flair, img_obj, sentence_lens, mask, relation=None, mode="train"):  # !!! word_seq  char_seq
-        # embedding_e_c = self.glove_embed_ec(sentence, sentence_lens, chars)
-        # print(img_obj.shape)
-        # print(sentences)
-        # print(sentences.shape)
-        # print(pre_sentences.shape)
-        # self.embeddings.embed(x_flair)
         if relation is None:
             return self._add_embeddings_internal(x_flair, img_obj, relation)
 
@@ -259,14 +211,11 @@ class MNER(torch.nn.Module):
 
         embeds = self.dropout(embed_flair)
         embeds = embeds.permute(1, 0, 2)  # se bs hi+embedding_h+c
-        # sentence_lens += 1
         packed_input = pack_padded_sequence(embeds, sentence_lens.numpy())
         packed_outputs, _ = self.lstm(packed_input)
         outputs, _ = pad_packed_sequence(packed_outputs)
 
         outputs = outputs.permute(1, 0, 2)  # batch_size * seq_len * hidden_dimension*2
-        # pre_out = pre_out.permute(0, 2, 1)
-        # outputs = torch.cat((outputs,pre_out),dim=-1)
         outputs = self.dropout(outputs)
         out = self.projection(outputs)
 
