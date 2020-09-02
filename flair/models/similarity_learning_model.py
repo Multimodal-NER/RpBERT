@@ -43,13 +43,13 @@ class SliceReshaper(flair.nn.Model):
 # -- works with binary cross entropy loss --
 class ModelSimilarity(SimilarityMeasure):
     """
-    Similarity defined by the model. The model parameters are given by the first element of the pair.
-    The similarity is evaluated by doing the forward pass (inference) on the parametrized model with
+    Similarity defined by the rpbert. The rpbert parameters are given by the first element of the pair.
+    The similarity is evaluated by doing the forward pass (inference) on the parametrized rpbert with
     the second element of the pair as input.
     """
 
     def __init__(self, model):
-        # model is a list of tuples (function, parameters), where parameters is a dict {param_name: param_extract_model}
+        # rpbert is a list of tuples (function, parameters), where parameters is a dict {param_name: param_extract_model}
         self.model = model
 
     def forward(self, x):
@@ -233,7 +233,7 @@ class SimilarityLearner(flair.nn.Model):
         mapped_target_embeddings = self._embed_target(data_points)
 
         if self.interleave_embedding_updates:
-            # 1/3 only source branch of model, 1/3 only target branch of model, 1/3 both
+            # 1/3 only source branch of rpbert, 1/3 only target branch of rpbert, 1/3 both
             detach_modality_id = torch.randint(0, 3, (1,)).item()
             if detach_modality_id == 0:
                 mapped_source_embeddings.detach()
@@ -377,7 +377,7 @@ class SimilarityLearner(flair.nn.Model):
 
     @staticmethod
     def _init_model_with_state_dict(state):
-        # The conversion from old model's constructor interface
+        # The conversion from old rpbert's constructor interface
         if "input_embeddings" in state:
             state["input_modality_0_embedding"] = state["input_embeddings"][0]
             state["input_modality_1_embedding"] = state["input_embeddings"][1]

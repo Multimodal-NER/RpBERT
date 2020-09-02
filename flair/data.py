@@ -1357,8 +1357,8 @@ def segtok_tokenizer(text: str) -> List[Token]:
 
 def build_spacy_tokenizer(model) -> Callable[[str], List[Token]]:
     """
-    Wrap Spacy model to build a tokenizer for the Sentence class.
-    :param model a Spacy V2 model
+    Wrap Spacy rpbert to build a tokenizer for the Sentence class.
+    :param model a Spacy V2 rpbert
     :return a tokenizer function to provide to Sentence class constructor
     """
     try:

@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""PyTorch OpenAI GPT-2 model."""
+"""PyTorch OpenAI GPT-2 rpbert."""
 
 import collections
 import copy
@@ -44,7 +44,7 @@ CONFIG_NAME = "config.json"
 WEIGHTS_NAME = "pytorch_model.bin"
 
 def load_tf_weights_in_gpt2(model, gpt2_checkpoint_path):
-    """ Load tf checkpoints in a pytorch model
+    """ Load tf checkpoints in a pytorch rpbert
     """
     try:
         import re
@@ -56,7 +56,7 @@ def load_tf_weights_in_gpt2(model, gpt2_checkpoint_path):
         raise
     tf_path = os.path.abspath(gpt2_checkpoint_path)
     print("Converting TensorFlow checkpoint from {}".format(tf_path))
-    # Load weights from TF model
+    # Load weights from TF rpbert
     init_vars = tf.train.list_variables(tf_path)
     names = []
     arrays = []
@@ -67,7 +67,7 @@ def load_tf_weights_in_gpt2(model, gpt2_checkpoint_path):
         arrays.append(array.squeeze())
 
     for name, array in zip(names, arrays):
-        name = name[6:]  # skip "model/"
+        name = name[6:]  # skip "rpbert/"
         name = name.split('/')
         pointer = model
         for m_name in name:
@@ -148,7 +148,7 @@ class GPT2Config(object):
         else:
             raise ValueError(
                 "First argument must be either a vocabulary size (int)"
-                "or the path to a pretrained model config file (str)"
+                "or the path to a pretrained rpbert config file (str)"
             )
 
     @classmethod
@@ -334,8 +334,8 @@ class GPT2PreTrainedModel(nn.Module):
         if not isinstance(config, GPT2Config):
             raise ValueError(
                 "Parameter config in `{}(config)` should be an instance of class `GPT2Config`. "
-                "To create a model from a pretrained model use "
-                "`model = {}.from_pretrained(PRETRAINED_MODEL_NAME)`".format(
+                "To create a rpbert from a pretrained rpbert use "
+                "`rpbert = {}.from_pretrained(PRETRAINED_MODEL_NAME)`".format(
                     self.__class__.__name__, self.__class__.__name__
                 )
             )
@@ -362,18 +362,18 @@ class GPT2PreTrainedModel(nn.Module):
         cls, pretrained_model_name_or_path, state_dict=None, cache_dir=None, from_tf=False, *inputs, **kwargs
     ):
         """
-        Instantiate a GPT2PreTrainedModel from a pre-trained model file or a pytorch state dict.
-        Download and cache the pre-trained model file if needed.
+        Instantiate a GPT2PreTrainedModel from a pre-trained rpbert file or a pytorch state dict.
+        Download and cache the pre-trained rpbert file if needed.
 
         Params:
             pretrained_model_name_or_path: either:
-                - a str with the name of a pre-trained model to load selected in the list of:
+                - a str with the name of a pre-trained rpbert to load selected in the list of:
                     . `openai-gpt`
-                - a path or url to a pretrained model archive containing:
-                    . `gpt2_config.json` a configuration file for the model
+                - a path or url to a pretrained rpbert archive containing:
+                    . `gpt2_config.json` a configuration file for the rpbert
                     . `pytorch_model.bin` a PyTorch dump of a GPT2Model instance
-                - a path or url to a pretrained model archive containing:
-                    . `bert_config.json` a configuration file for the model
+                - a path or url to a pretrained rpbert archive containing:
+                    . `bert_config.json` a configuration file for the rpbert
                     . a TensorFlow checkpoint with trained weights
             from_tf: should we load the weights from a locally saved TensorFlow checkpoint
             cache_dir: an optional path to a folder in which the pre-trained models will be cached.
@@ -393,7 +393,7 @@ class GPT2PreTrainedModel(nn.Module):
             resolved_config_file = cached_path(config_file, cache_dir=cache_dir)
         except EnvironmentError:
             logger.error(
-                "Model name '{}' was not found in model name list ({}). "
+                "Model name '{}' was not found in rpbert name list ({}). "
                 "We assumed '{}' was a path or url but couldn't find files {} and {} "
                 "at this path or url.".format(
                     pretrained_model_name_or_path, ", ".join(PRETRAINED_MODEL_ARCHIVE_MAP.keys()), pretrained_model_name_or_path,
@@ -412,7 +412,7 @@ class GPT2PreTrainedModel(nn.Module):
         # Load config
         config = GPT2Config.from_json_file(resolved_config_file)
         logger.info("Model config {}".format(config))
-        # Instantiate model.
+        # Instantiate rpbert.
         model = cls(config, *inputs, **kwargs)
         if state_dict is None and not from_tf:
             state_dict = torch.load(resolved_archive_file, map_location='cpu' if not torch.cuda.is_available() else None)
@@ -461,11 +461,11 @@ class GPT2PreTrainedModel(nn.Module):
 
         if len(missing_keys) > 0:
             logger.info(
-                "Weights of {} not initialized from pretrained model: {}".format(model.__class__.__name__, missing_keys)
+                "Weights of {} not initialized from pretrained rpbert: {}".format(model.__class__.__name__, missing_keys)
             )
         if len(unexpected_keys) > 0:
             logger.info(
-                "Weights from pretrained model not used in {}: {}".format(model.__class__.__name__, unexpected_keys)
+                "Weights from pretrained rpbert not used in {}: {}".format(model.__class__.__name__, unexpected_keys)
             )
         if len(error_msgs) > 0:
             raise RuntimeError(
@@ -478,10 +478,10 @@ class GPT2PreTrainedModel(nn.Module):
 
 
 class GPT2Model(GPT2PreTrainedModel):
-    """OpenAI GPT-2 model ("Language Models are Unsupervised Multitask Learners").
+    """OpenAI GPT-2 rpbert ("Language Models are Unsupervised Multitask Learners").
 
     Params:
-        config: a GPT2Config class instance with the configuration to build a new model
+        config: a GPT2Config class instance with the configuration to build a new rpbert
 
     Inputs:
         `input_ids`: a torch.LongTensor of shape [batch_size, sequence_length] (or more generally [d_1, ..., d_n, sequence_length]
@@ -495,7 +495,7 @@ class GPT2Model(GPT2PreTrainedModel):
             self-attention block.
 
     Outputs:
-        `hidden_states`: the encoded-hidden-states at the top of the model
+        `hidden_states`: the encoded-hidden-states at the top of the rpbert
             as a torch.FloatTensor of size [batch_size, sequence_length, hidden_size]
             (or more generally [d_1, ..., d_n, hidden_size] were d_1 ... d_n are the dimension of input_ids)
 
@@ -506,8 +506,8 @@ class GPT2Model(GPT2PreTrainedModel):
 
     config = modeling_gpt2.GPT2Config()
 
-    model = modeling_gpt2.GPT2Model(config)
-    hidden_states = model(input_ids)
+    rpbert = modeling_gpt2.GPT2Model(config)
+    hidden_states = rpbert(input_ids)
     ```
     """
 
@@ -553,10 +553,10 @@ class GPT2Model(GPT2PreTrainedModel):
 
 
 class GPT2LMHeadModel(GPT2PreTrainedModel):
-    """OpenAI GPT-2 model with a Language Modeling head ("Language Models are Unsupervised Multitask Learners").
+    """OpenAI GPT-2 rpbert with a Language Modeling head ("Language Models are Unsupervised Multitask Learners").
 
     Params:
-        config: a GPT2Config class instance with the configuration to build a new model
+        config: a GPT2Config class instance with the configuration to build a new rpbert
 
     Inputs:
         `input_ids`: a torch.LongTensor of shape [batch_size, sequence_length] (or more generally [d_1, ..., d_n, sequence_length]
@@ -586,8 +586,8 @@ class GPT2LMHeadModel(GPT2PreTrainedModel):
 
     config = modeling_gpt2.GPT2Config()
 
-    model = modeling_gpt2.GPT2LMHeadModel(config)
-    lm_logits = model(input_ids)
+    rpbert = modeling_gpt2.GPT2LMHeadModel(config)
+    lm_logits = rpbert(input_ids)
     ```
     """
 
@@ -613,10 +613,10 @@ class GPT2LMHeadModel(GPT2PreTrainedModel):
 
 
 class GPT2DoubleHeadsModel(GPT2PreTrainedModel):
-    """OpenAI GPT-2 model with a Language Modeling and a Multiple Choice head ("Language Models are Unsupervised Multitask Learners").
+    """OpenAI GPT-2 rpbert with a Language Modeling and a Multiple Choice head ("Language Models are Unsupervised Multitask Learners").
 
     Params:
-        config: a GPT2Config class instance with the configuration to build a new model
+        config: a GPT2Config class instance with the configuration to build a new rpbert
 
     Inputs:
         `input_ids`: a torch.LongTensor of shape [batch_size, num_choices, sequence_length] with the BPE token
@@ -651,8 +651,8 @@ class GPT2DoubleHeadsModel(GPT2PreTrainedModel):
 
     config = modeling_gpt2.GPT2Config()
 
-    model = modeling_gpt2.GPT2LMHeadModel(config)
-    lm_logits, multiple_choice_logits = model(input_ids, mc_token_ids)
+    rpbert = modeling_gpt2.GPT2LMHeadModel(config)
+    lm_logits, multiple_choice_logits = rpbert(input_ids, mc_token_ids)
     ```
     """
 

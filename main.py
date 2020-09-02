@@ -1,7 +1,7 @@
 import os
 import argparse
-from model import *
-from MM_pretrain.model import *
+from mner import *
+from rpbert.bert_rel import *
 from data_loader import DataLoader
 from data_loader_bb import DataLoader as DLbb
 from evaluator import Evaluator
@@ -11,7 +11,7 @@ import numpy as np
 import torch
 import flair
 from cfgs.config import config, update_config
-from MM_pretrain.resnet_vlbert import ResNetVLBERT
+from rpbert.resnet_vlbert import ResNetVLBERT
 
 device_id = 2
 torch.cuda.set_device(device_id)
@@ -41,7 +41,7 @@ def parse_arguments():
     parser.add_argument("--image_obj_boxes_dir", dest="image_obj_boxes_dir", type=str,
                         default="/home/data/datasets/snap/boxes/")
     # parser.add_argument("--word2vec_model", dest="word2vec_model", type=str, default='/mnt/wfs/data/glove100.txt')
-    #parameters for pretrain model
+    #parameters for pretrain rpbert
     parser.add_argument("--pretrain_load", dest="pretrain_load", type=int, default=1)
     parser.add_argument("--pre_hidden_dimension", dest="pre_hidden_dimension", type=int, default=256)
     parser.add_argument("--cat_h_e", dest="cat_h_e", type=int, default=1)
@@ -103,9 +103,9 @@ def main():
             print('miss keys: {}'.format(miss_keys))
         myvlbert.load_state_dict(new_state_dict)
 
-        pre_model = MM_pretrain(params, myvlbert)
+        pre_model = BertRel(params, myvlbert)
         # pre_model.load_state_dict(pretrain['model_state_dict'])
-        print('Load pretrain model...[OK]')
+        print('Load pretrain rpbert...[OK]')
 
     dl = DataLoader(params)
     dlbb = DLbb(params)
@@ -118,21 +118,21 @@ def main():
         t.train()
         print("Training...[OK]")
     elif params.mode == 1:
-        print("Loading model...")
+        print("Loading rpbert...")
         model = MNER(params)
         model_file_path = os.path.join(params.model_dir, params.model_file_name)
         model.load_state_dict(torch.load(model_file_path))
         if torch.cuda.is_available():
             model = model.cuda()
-        print("Loading model...[OK]")
+        print("Loading rpbert...[OK]")
 
-        print("Evaluating model on test set...")
+        print("Evaluating rpbert on test set...")
         acc, f1, prec, rec = evaluator.get_accuracy(model, 'test')
         print("Accuracy : {}".format(acc))
         print("F1 : {}".format(f1))
         print("Precision : {}".format(prec))
         print("Recall : {}".format(rec))
-        print("Evaluating model on test set...[OK]")
+        print("Evaluating rpbert on test set...[OK]")
 
 
 if __name__ == '__main__':

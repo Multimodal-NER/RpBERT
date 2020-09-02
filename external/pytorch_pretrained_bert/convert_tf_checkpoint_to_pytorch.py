@@ -24,16 +24,16 @@ import torch
 from external.pytorch_pretrained_bert.modeling import BertConfig, BertForPreTraining, load_tf_weights_in_bert
 
 def convert_tf_checkpoint_to_pytorch(tf_checkpoint_path, bert_config_file, pytorch_dump_path):
-    # Initialise PyTorch model
+    # Initialise PyTorch rpbert
     config = BertConfig.from_json_file(bert_config_file)
-    print("Building PyTorch model from configuration: {}".format(str(config)))
+    print("Building PyTorch rpbert from configuration: {}".format(str(config)))
     model = BertForPreTraining(config)
 
     # Load weights from tf checkpoint
     load_tf_weights_in_bert(model, tf_checkpoint_path)
 
-    # Save pytorch-model
-    print("Save PyTorch model to {}".format(pytorch_dump_path))
+    # Save pytorch-rpbert
+    print("Save PyTorch rpbert to {}".format(pytorch_dump_path))
     torch.save(model.state_dict(), pytorch_dump_path)
 
 
@@ -49,13 +49,13 @@ if __name__ == "__main__":
                         default = None,
                         type = str,
                         required = True,
-                        help = "The config json file corresponding to the pre-trained BERT model. \n"
-                            "This specifies the model architecture.")
+                        help = "The config json file corresponding to the pre-trained BERT rpbert. \n"
+                            "This specifies the rpbert architecture.")
     parser.add_argument("--pytorch_dump_path",
                         default = None,
                         type = str,
                         required = True,
-                        help = "Path to the output PyTorch model.")
+                        help = "Path to the output PyTorch rpbert.")
     args = parser.parse_args()
     convert_tf_checkpoint_to_pytorch(args.tf_checkpoint_path,
                                      args.bert_config_file,

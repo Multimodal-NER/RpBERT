@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" PyTorch Transformer XL model.
+""" PyTorch Transformer XL rpbert.
     Adapted from https://github.com/kimiyoung/transformer-xl.
     In particular https://github.com/kimiyoung/transformer-xl/blob/master/pytorch/mem_transformer.py
 """
@@ -50,11 +50,11 @@ PRETRAINED_CONFIG_ARCHIVE_MAP = {
 }
 CONFIG_NAME = 'config.json'
 WEIGHTS_NAME = 'pytorch_model.bin'
-TF_WEIGHTS_NAME = 'model.ckpt'
+TF_WEIGHTS_NAME = 'rpbert.ckpt'
 
 def build_tf_to_pytorch_map(model, config):
     """ A map of modules from TF to PyTorch.
-        This time I use a map to keep the PyTorch model as identical to the original PyTorch model as possible.
+        This time I use a map to keep the PyTorch rpbert as identical to the original PyTorch rpbert as possible.
     """
     tf_to_pt_map = {}
 
@@ -125,7 +125,7 @@ def build_tf_to_pytorch_map(model, config):
     return tf_to_pt_map
 
 def load_tf_weights_in_transfo_xl(model, config, tf_path):
-    """ Load tf checkpoints in a pytorch model
+    """ Load tf checkpoints in a pytorch rpbert
     """
     try:
         import numpy as np
@@ -137,7 +137,7 @@ def load_tf_weights_in_transfo_xl(model, config, tf_path):
     # Build TF to PyTorch weights loading map
     tf_to_pt_map = build_tf_to_pytorch_map(model, config)
 
-    # Load weights from TF model
+    # Load weights from TF rpbert
     init_vars = tf.train.list_variables(tf_path)
     tf_weights = {}
     for name, shape in init_vars:
@@ -149,7 +149,7 @@ def load_tf_weights_in_transfo_xl(model, config, tf_path):
         assert name in tf_weights
         array = tf_weights[name]
         # adam_v and adam_m are variables used in AdamWeightDecayOptimizer to calculated m and v
-        # which are not required for using pretrained model
+        # which are not required for using pretrained rpbert
         if 'kernel' in name or 'proj' in name:
             array = np.transpose(array)
         if ('r_r_bias' in name or 'r_w_bias' in name) and len(pointer) > 1:
@@ -176,7 +176,7 @@ def load_tf_weights_in_transfo_xl(model, config, tf_path):
         tf_weights.pop(name + '/Adam', None)
         tf_weights.pop(name + '/Adam_1', None)
 
-    print("Weights not copied to PyTorch model: {}".format(', '.join(tf_weights.keys())))
+    print("Weights not copied to PyTorch rpbert: {}".format(', '.join(tf_weights.keys())))
     return model
 
 
@@ -216,9 +216,9 @@ class TransfoXLConfig(object):
         Args:
             vocab_size_or_config_json_file: Vocabulary size of `inputs_ids` in `TransfoXLModel` or a configuration json file.
             cutoffs: cutoffs for the adaptive softmax
-            d_model: Dimensionality of the model's hidden states.
+            d_model: Dimensionality of the rpbert's hidden states.
             d_embed: Dimensionality of the embeddings
-            d_head: Dimensionality of the model's heads.
+            d_head: Dimensionality of the rpbert's heads.
             div_val: divident value for adapative input and softmax
             pre_lnorm: apply LayerNorm to the input instead of the output
             d_inner: Inner dimension in FF
@@ -285,7 +285,7 @@ class TransfoXLConfig(object):
             self.init_std = init_std
         else:
             raise ValueError("First argument must be either a vocabulary size (int)"
-                             "or the path to a pretrained model config file (str)")
+                             "or the path to a pretrained rpbert config file (str)")
 
     @classmethod
     def from_dict(cls, json_object):
@@ -822,8 +822,8 @@ class TransfoXLPreTrainedModel(nn.Module):
         if not isinstance(config, TransfoXLConfig):
             raise ValueError(
                 "Parameter config in `{}(config)` should be an instance of class `TransfoXLConfig`. "
-                "To create a model from a pretrained model use "
-                "`model = {}.from_pretrained(PRETRAINED_MODEL_NAME)`".format(
+                "To create a rpbert from a pretrained rpbert use "
+                "`rpbert = {}.from_pretrained(PRETRAINED_MODEL_NAME)`".format(
                     self.__class__.__name__, self.__class__.__name__
                 ))
         self.config = config
@@ -885,19 +885,19 @@ class TransfoXLPreTrainedModel(nn.Module):
     def from_pretrained(cls, pretrained_model_name_or_path, state_dict=None, cache_dir=None,
                         from_tf=False, *inputs, **kwargs):
         """
-        Instantiate a TransfoXLPreTrainedModel from a pre-trained model file or a pytorch state dict.
-        Download and cache the pre-trained model file if needed.
+        Instantiate a TransfoXLPreTrainedModel from a pre-trained rpbert file or a pytorch state dict.
+        Download and cache the pre-trained rpbert file if needed.
 
         Params:
             pretrained_model_name_or_path: either:
-                - a str with the name of a pre-trained model to load selected in the list of:
+                - a str with the name of a pre-trained rpbert to load selected in the list of:
                     . `transfo-xl`
-                - a path or url to a pretrained model archive containing:
-                    . `transfo_xl_config.json` a configuration file for the model
+                - a path or url to a pretrained rpbert archive containing:
+                    . `transfo_xl_config.json` a configuration file for the rpbert
                     . `pytorch_model.bin` a PyTorch dump of a TransfoXLModel instance
-                - a path or url to a pretrained model archive containing:
-                    . `bert_config.json` a configuration file for the model
-                    . `model.chkpt` a TensorFlow checkpoint
+                - a path or url to a pretrained rpbert archive containing:
+                    . `bert_config.json` a configuration file for the rpbert
+                    . `rpbert.chkpt` a TensorFlow checkpoint
             from_tf: should we load the weights from a locally saved TensorFlow checkpoint
             cache_dir: an optional path to a folder in which the pre-trained models will be cached.
             state_dict: an optional state dictionnary (collections.OrderedDict object) to use instead of pre-trained models
@@ -916,7 +916,7 @@ class TransfoXLPreTrainedModel(nn.Module):
             resolved_config_file = cached_path(config_file, cache_dir=cache_dir)
         except EnvironmentError:
             logger.error(
-                "Model name '{}' was not found in model name list ({}). "
+                "Model name '{}' was not found in rpbert name list ({}). "
                 "We assumed '{}' was a path or url but couldn't find files {} and {} "
                 "at this path or url.".format(
                     pretrained_model_name_or_path,
@@ -935,7 +935,7 @@ class TransfoXLPreTrainedModel(nn.Module):
         # Load config
         config = TransfoXLConfig.from_json_file(resolved_config_file)
         logger.info("Model config {}".format(config))
-        # Instantiate model.
+        # Instantiate rpbert.
         model = cls(config, *inputs, **kwargs)
         if state_dict is None and not from_tf:
             state_dict = torch.load(resolved_archive_file, map_location='cpu' if not torch.cuda.is_available() else None)
@@ -966,10 +966,10 @@ class TransfoXLPreTrainedModel(nn.Module):
         load(model, prefix=start_prefix)
 
         if len(missing_keys) > 0:
-            logger.info("Weights of {} not initialized from pretrained model: {}".format(
+            logger.info("Weights of {} not initialized from pretrained rpbert: {}".format(
                 model.__class__.__name__, missing_keys))
         if len(unexpected_keys) > 0:
-            logger.info("Weights from pretrained model not used in {}: {}".format(
+            logger.info("Weights from pretrained rpbert not used in {}: {}".format(
                 model.__class__.__name__, unexpected_keys))
         if len(error_msgs) > 0:
             raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
@@ -981,14 +981,14 @@ class TransfoXLPreTrainedModel(nn.Module):
 
 
 class TransfoXLModel(TransfoXLPreTrainedModel):
-    """Transformer XL model ("Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context").
+    """Transformer XL rpbert ("Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context").
 
     Transformer XL use a relative positioning (with sinusiodal patterns) and adaptive softmax inputs which means that:
     - you don't need to specify positioning embeddings indices
     - the tokens in the vocabulary have to be sorted to decreasing frequency.
 
     Params:
-        config: a TransfoXLConfig class instance with the configuration to build a new model
+        config: a TransfoXLConfig class instance with the configuration to build a new rpbert
 
     Inputs:
         `input_ids`: a torch.LongTensor of shape [batch_size, sequence_length]
@@ -999,7 +999,7 @@ class TransfoXLModel(TransfoXLPreTrainedModel):
             Note that the first two dimensions are transposed in `mems` with regards to `input_ids` and `target`
     Outputs:
         A tuple of (last_hidden_state, new_mems)
-        `last_hidden_state`: the encoded-hidden-states at the top of the model
+        `last_hidden_state`: the encoded-hidden-states at the top of the rpbert
             as a torch.FloatTensor of size [batch_size, sequence_length, self.config.d_model]
         `new_mems`: list (num layers) of updated mem states at the entry of each layer
             each mem state is a torch.FloatTensor of size [self.config.mem_len, batch_size, self.config.d_model]
@@ -1013,11 +1013,11 @@ class TransfoXLModel(TransfoXLPreTrainedModel):
 
     config = TransfoXLConfig()
 
-    model = TransfoXLModel(config)
-    last_hidden_state, new_mems = model(input_ids)
+    rpbert = TransfoXLModel(config)
+    last_hidden_state, new_mems = rpbert(input_ids)
 
     # Another time on input_ids_next using the memory:
-    last_hidden_state, new_mems = model(input_ids_next, new_mems)
+    last_hidden_state, new_mems = rpbert(input_ids_next, new_mems)
     ```
     """
     def __init__(self, config):
@@ -1258,9 +1258,9 @@ class TransfoXLModel(TransfoXLPreTrainedModel):
 
 
 class TransfoXLLMHeadModel(TransfoXLPreTrainedModel):
-    """Transformer XL model ("Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context").
+    """Transformer XL rpbert ("Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context").
 
-    This model add an (adaptive) softmax head on top of the TransfoXLModel
+    This rpbert add an (adaptive) softmax head on top of the TransfoXLModel
 
     Transformer XL use a relative positioning (with sinusiodal patterns) and adaptive softmax inputs which means that:
     - you don't need to specify positioning embeddings indices
@@ -1269,7 +1269,7 @@ class TransfoXLLMHeadModel(TransfoXLPreTrainedModel):
     Call self.tie_weights() if you update/load the weights of the transformer to keep the weights tied.
 
     Params:
-        config: a TransfoXLConfig class instance with the configuration to build a new model
+        config: a TransfoXLConfig class instance with the configuration to build a new rpbert
 
     Inputs:
         `input_ids`: a torch.LongTensor of shape [batch_size, sequence_length]
@@ -1300,11 +1300,11 @@ class TransfoXLLMHeadModel(TransfoXLPreTrainedModel):
 
     config = TransfoXLConfig()
 
-    model = TransfoXLModel(config)
-    last_hidden_state, new_mems = model(input_ids)
+    rpbert = TransfoXLModel(config)
+    last_hidden_state, new_mems = rpbert(input_ids)
 
     # Another time on input_ids_next using the memory:
-    last_hidden_state, new_mems = model(input_ids_next, mems=new_mems)
+    last_hidden_state, new_mems = rpbert(input_ids_next, mems=new_mems)
     ```
     """
     def __init__(self, config):

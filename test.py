@@ -1,7 +1,7 @@
 import os
 import argparse
-from model import *
-from MM_pretrain.model import *
+from mner import *
+from rpbert.bert_rel import *
 from data_loader import DataLoader
 from data_loader_bb import DataLoader as DLbb
 from evaluator import Evaluator
@@ -16,7 +16,7 @@ import subprocess
 
 from cfgs.config import config, update_config
 
-from MM_pretrain.resnet_vlbert import ResNetVLBERT
+from rpbert.resnet_vlbert import ResNetVLBERT
 
 
 device_id = 2
@@ -48,7 +48,7 @@ def parse_arguments():
                         default="/home/data/datasets/snap/boxes/")
     # parser.add_argument("--word2vec_model", dest="word2vec_model", type=str, default='/mnt/wfs/data/glove100.txt')
 
-    #parameters for pretrain model
+    #parameters for pretrain rpbert
     parser.add_argument("--pretrain_load", dest="pretrain_load", type=int, default=1)
 
     parser.add_argument("--pre_hidden_dimension", dest="pre_hidden_dimension", type=int, default=256)
@@ -72,7 +72,7 @@ def parse_arguments():
     parser.add_argument("--validate_every", dest="validate_every", type=int, default=1)
     parser.add_argument("--mode", dest="mode", type=int, default=1)
     parser.add_argument("--model_dir", dest="model_dir", type=str, default=MODEL_DIR)
-    parser.add_argument("--model_file_name", dest="model_file_name", type=str, default="path to your model weights")
+    parser.add_argument("--model_file_name", dest="model_file_name", type=str, default="path to your rpbert weights")
     parser.add_argument("--sent_maxlen", dest="sent_maxlen", type=int, default=35)
     parser.add_argument("--word_maxlen", dest="word_maxlen", type=int, default=41)
     parser.add_argument("--regions_in_image", dest="regions_in_image", type=int, default=49)
@@ -96,7 +96,7 @@ def main():
 
 
     myvlbert = ResNetVLBERT(config)
-    pre_model = MM_pretrain(params, myvlbert)
+    pre_model = BertRel(params, myvlbert)
 
     dl = DataLoader(params)
     dlbb = DLbb(params)
@@ -109,7 +109,7 @@ def main():
         t.train()
         print("Training...[OK]")
     elif params.mode == 1:
-        print("Loading model...")
+        print("Loading rpbert...")
         embedding_types = [
             WordEmbeddings(
                 '/media/iot538/a73dbfc5-a8a0-4021-a841-3b7d7f3fd964/mnt/xj/wnut17_advanced/pretrain/en-fasttext-crawl-300d-1M'),
@@ -122,16 +122,16 @@ def main():
         model.load_state_dict(torch.load(model_file_path))
         if torch.cuda.is_available():
             model = model.cuda()
-        print("Loading model...[OK]")
+        print("Loading rpbert...[OK]")
 
-        print("Evaluating model on test set...")
+        print("Evaluating rpbert on test set...")
         with torch.no_grad():
             acc, f1, prec, rec = evaluator.get_accuracy(model, 'test')
         print("Accuracy : {}".format(acc))
         print("F1 : {}".format(f1))
         print("Precision : {}".format(prec))
         print("Recall : {}".format(rec))
-        print("Evaluating model on test set...[OK]")
+        print("Evaluating rpbert on test set...[OK]")
 
 
 if __name__ == '__main__':

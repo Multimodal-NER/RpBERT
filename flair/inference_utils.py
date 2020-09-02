@@ -19,7 +19,7 @@ class WordEmbeddingsStore:
     """
     class to simulate a WordEmbeddings class from flair.
 
-    Run this to generate a headless (without word embeddings) model as well a stored word embeddings:
+    Run this to generate a headless (without word embeddings) rpbert as well a stored word embeddings:
 
     >>> from flair.inference_utils import WordEmbeddingsStore
     >>> from flair.models import SequenceTagger
@@ -105,7 +105,7 @@ class WordEmbeddingsStore:
     @staticmethod
     def create_stores(model, backend='sqlite'):
         """
-        creates database versions of all word embeddings in the model and
+        creates database versions of all word embeddings in the rpbert and
         deletes the original vectors to save memory
         """
         for embedding in model.embeddings.embeddings:
@@ -116,7 +116,7 @@ class WordEmbeddingsStore:
     @staticmethod
     def load_stores(model, backend='sqlite'):
         """
-        loads the db versions of all word embeddings in the model
+        loads the db versions of all word embeddings in the rpbert
         """
         for i, embedding in enumerate(model.embeddings.embeddings):
             if type(embedding) == WordEmbeddings:

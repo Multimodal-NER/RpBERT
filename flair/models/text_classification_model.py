@@ -25,9 +25,9 @@ log = logging.getLogger("flair")
 class TextClassifier(flair.nn.Model):
     """
     Text Classification Model
-    The model takes word embeddings, puts them into an RNN to obtain a text representation, and puts the
+    The rpbert takes word embeddings, puts them into an RNN to obtain a text representation, and puts the
     text representation in the end into a linear layer to get the actual class label.
-    The model can handle single and multi class data sets.
+    The rpbert can handle single and multi class data sets.
     """
 
     def __init__(
@@ -360,7 +360,7 @@ class TextClassifier(flair.nn.Model):
     ) -> List[List[Label]]:
         """
         Predicts the labels of sentences.
-        :param scores: the prediction scores from the model
+        :param scores: the prediction scores from the rpbert
         :return: list of predicted labels
         """
 

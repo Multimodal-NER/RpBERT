@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" Tokenization classes for Transformer XL model.
+""" Tokenization classes for Transformer XL rpbert.
     Adapted from https://github.com/kimiyoung/transformer-xl.
 """
 from __future__ import (absolute_import, division, print_function,
@@ -69,7 +69,7 @@ class TransfoXLTokenizer(object):
             resolved_vocab_file = cached_path(vocab_file, cache_dir=cache_dir)
         except EnvironmentError:
             logger.error(
-                "Model name '{}' was not found in model name list ({}). "
+                "Model name '{}' was not found in rpbert name list ({}). "
                 "We assumed '{}' was a path or url but couldn't find files {} "
                 "at this path or url.".format(
                     pretrained_model_name_or_path,

@@ -31,7 +31,7 @@ DATASET:
 
 
 NETWORK:
-  PARTIAL_PRETRAIN: "./model/pretrained_model/vl-bert-base-e2e.model"
+  PARTIAL_PRETRAIN: "./rpbert/pretrained_model/vl-bert-base-e2e.rpbert"
   PARTIAL_PRETRAIN_PREFIX_CHANGES:
   - "vlbert.mvrc_head.transform->final_mlp.0"
   - "module.vlbert.mvrc_head.transform->module.final_mlp.0"
@@ -49,7 +49,7 @@ NETWORK:
   - 1.0
   - 1.0
   IMAGE_FEAT_PRECOMPUTED: false
-  IMAGE_PRETRAINED: './model/pretrained_model/resnet101-pt-vgbua'
+  IMAGE_PRETRAINED: './rpbert/pretrained_model/resnet101-pt-vgbua'
   IMAGE_PRETRAINED_EPOCH: 0
   IMAGE_FROZEN_BACKBONE_STAGES:
   - 1
@@ -58,7 +58,7 @@ NETWORK:
   IMAGE_FINAL_DIM: 768
   IMAGE_SEMANTIC: false
   OUTPUT_CONV5: false
-  BERT_MODEL_NAME: './model/pretrained_model/bert-base-uncased'
+  BERT_MODEL_NAME: './rpbert/pretrained_model/bert-base-uncased'
   BERT_PRETRAINED: ''
   BERT_PRETRAINED_EPOCH: 0
   BERT_FROZEN: false

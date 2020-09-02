@@ -16,7 +16,7 @@ from flair.training_utils import Result
 
 class Model(torch.nn.Module):
     """Abstract base class for all downstream task models in Flair, such as SequenceTagger and TextClassifier.
-    Every new type of model must implement these methods."""
+    Every new type of rpbert must implement these methods."""
 
     @abstractmethod
     def forward_loss(
@@ -32,7 +32,7 @@ class Model(torch.nn.Module):
         out_path: Path = None,
         embedding_storage_mode: str = "none",
     ) -> (Result, float):
-        """Evaluates the model. Returns a Result object containing evaluation
+        """Evaluates the rpbert. Returns a Result object containing evaluation
         results and a loss value. Implement this to enable evaluation.
         :param data_loader: DataLoader that iterates over dataset to be evaluated
         :param out_path: Optional output path to store predictions
@@ -44,14 +44,14 @@ class Model(torch.nn.Module):
 
     @abstractmethod
     def _get_state_dict(self):
-        """Returns the state dictionary for this model. Implementing this enables the save() and save_checkpoint()
+        """Returns the state dictionary for this rpbert. Implementing this enables the save() and save_checkpoint()
         functionality."""
         pass
 
     @staticmethod
     @abstractmethod
     def _init_model_with_state_dict(state):
-        """Initialize the model from a state dictionary. Implementing this enables the load() and load_checkpoint()
+        """Initialize the rpbert from a state dictionary. Implementing this enables the load() and load_checkpoint()
         functionality."""
         pass
 
@@ -62,8 +62,8 @@ class Model(torch.nn.Module):
 
     def save(self, model_file: Union[str, Path]):
         """
-        Saves the current model to the provided file.
-        :param model_file: the model file
+        Saves the current rpbert to the provided file.
+        :param model_file: the rpbert file
         """
         model_state = self._get_state_dict()
 
@@ -72,9 +72,9 @@ class Model(torch.nn.Module):
     @classmethod
     def load(cls, model: Union[str, Path]):
         """
-        Loads the model from the given file.
-        :param model: the model file
-        :return: the loaded text classifier model
+        Loads the rpbert from the given file.
+        :param model: the rpbert file
+        :return: the loaded text classifier rpbert
         """
         model_file = cls._fetch_model(str(model))
 

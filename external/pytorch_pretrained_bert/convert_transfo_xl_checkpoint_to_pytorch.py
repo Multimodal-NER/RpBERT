@@ -65,24 +65,24 @@ def convert_transfo_xl_checkpoint_to_pytorch(tf_checkpoint_path,
         torch.save(corpus_dict_no_vocab, pytorch_dataset_dump_path)
 
     if tf_checkpoint_path:
-        # Convert a pre-trained TensorFlow model
+        # Convert a pre-trained TensorFlow rpbert
         config_path = os.path.abspath(transfo_xl_config_file)
         tf_path = os.path.abspath(tf_checkpoint_path)
 
         print("Converting Transformer XL checkpoint from {} with config at {}".format(tf_path, config_path))
-        # Initialise PyTorch model
+        # Initialise PyTorch rpbert
         if transfo_xl_config_file == "":
             config = TransfoXLConfig()
         else:
             config = TransfoXLConfig(transfo_xl_config_file)
-        print("Building PyTorch model from configuration: {}".format(str(config)))
+        print("Building PyTorch rpbert from configuration: {}".format(str(config)))
         model = TransfoXLLMHeadModel(config)
 
         model = load_tf_weights_in_transfo_xl(model, config, tf_path)
-        # Save pytorch-model
+        # Save pytorch-rpbert
         pytorch_weights_dump_path = os.path.join(pytorch_dump_folder_path, WEIGHTS_NAME)
         pytorch_config_dump_path = os.path.join(pytorch_dump_folder_path, CONFIG_NAME)
-        print("Save PyTorch model to {}".format(os.path.abspath(pytorch_weights_dump_path)))
+        print("Save PyTorch rpbert to {}".format(os.path.abspath(pytorch_weights_dump_path)))
         torch.save(model.state_dict(), pytorch_weights_dump_path)
         print("Save configuration file to {}".format(os.path.abspath(pytorch_config_dump_path)))
         with open(pytorch_config_dump_path, "w", encoding="utf-8") as f:
@@ -95,7 +95,7 @@ if __name__ == "__main__":
                         default = None,
                         type = str,
                         required = True,
-                        help = "Path to the folder to store the PyTorch model or dataset/vocab.")
+                        help = "Path to the folder to store the PyTorch rpbert or dataset/vocab.")
     parser.add_argument("--tf_checkpoint_path",
                         default = "",
                         type = str,
@@ -103,8 +103,8 @@ if __name__ == "__main__":
     parser.add_argument("--transfo_xl_config_file",
                         default = "",
                         type = str,
-                        help = "An optional config json file corresponding to the pre-trained BERT model. \n"
-                            "This specifies the model architecture.")
+                        help = "An optional config json file corresponding to the pre-trained BERT rpbert. \n"
+                            "This specifies the rpbert architecture.")
     parser.add_argument("--transfo_xl_dataset_file",
                         default = "",
                         type = str,

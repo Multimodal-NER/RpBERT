@@ -76,7 +76,7 @@ class TextRegressor(flair.models.TextClassifier):
     ) -> torch.tensor:
         """
         Calculates the loss.
-        :param scores: the prediction scores from the model
+        :param scores: the prediction scores from the rpbert
         :param sentences: list of sentences
         :return: loss value
         """

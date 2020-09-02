@@ -169,7 +169,7 @@ class DataLoader:
 
         # if self.params.word2vec_model != '':
         #     # self.word2vec_model = gensim.models.KeyedVectors.load_word2vec_format(self.params.word2vec_model)
-        #     model = word2vec.Word2Vec.load(self.params.word2vec_model)
+        #     rpbert = word2vec.Word2Vec.load(self.params.word2vec_model)
 
 
     def load_data(self):

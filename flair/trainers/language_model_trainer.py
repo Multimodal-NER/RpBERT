@@ -378,7 +378,7 @@ class LanguageModelTrainer:
                         self.model.zero_grad()
                         optimizer.zero_grad()
 
-                        # do the forward pass in the model
+                        # do the forward pass in the rpbert
                         output, rnn_output, hidden = self.model.forward(data, hidden)
 
                         # try to predict the targets
@@ -398,7 +398,7 @@ class LanguageModelTrainer:
                         total_loss += loss.data
 
                         # We detach the hidden state from how it was previously produced.
-                        # If we didn't, the model would try backpropagating all the way to start of the dataset.
+                        # If we didn't, the rpbert would try backpropagating all the way to start of the dataset.
                         hidden = self._repackage_hidden(hidden)
 
                         # explicitly remove loss to clear up memory
@@ -446,7 +446,7 @@ class LanguageModelTrainer:
                             best_val_loss,
                         )
 
-                    # Save the model if the validation loss is the best we've seen so far.
+                    # Save the rpbert if the validation loss is the best we've seen so far.
                     if val_loss < best_val_loss:
                         self.model.best_score = best_val_loss
                         self.model.save(savefile)
@@ -548,7 +548,7 @@ class LanguageModelTrainer:
     ):
         checkpoint = LanguageModel.load_checkpoint(checkpoint_file)
         return LanguageModelTrainer(
-            checkpoint["model"],
+            checkpoint["rpbert"],
             corpus,
             optimizer,
             epoch=checkpoint["epoch"],

@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from typing import List, Union, Dict, Tuple
-# from MM_pretrain.resnet_model import resnet34
+# from rpbert.resnet_model import resnet34
 import math
 from pytorch_pretrained_bert import BertTokenizer
 import flair

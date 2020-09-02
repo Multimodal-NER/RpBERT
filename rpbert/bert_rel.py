@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
-from MM_pretrain.util import *
+from rpbert.util import *
 # from resnet_model import resnet34
 import math
 
@@ -19,9 +19,9 @@ def gelu_new(x):
     return 0.5 * x * (1.0 + torch.tanh(math.sqrt(2.0 / math.pi) * (x + 0.044715 * torch.pow(x, 3.0))))
 
 
-class MM_pretrain(torch.nn.Module):
+class BertRel(torch.nn.Module):
     def __init__(self, params, myvlbert):
-        super(MM_pretrain, self).__init__()
+        super(BertRel, self).__init__()
         self.params = params
         self.mybert = myvlbert
         self.pair_preject = torch.nn.Linear(in_features=768, out_features=2)

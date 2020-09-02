@@ -3,9 +3,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from external.pytorch_pretrained_bert import BertTokenizer
-from MM_pretrain.module import Module
-from MM_pretrain.visual_linguistic_bert import VisualLinguisticBert
-from MM_pretrain.resnet_model import resnet152
+from rpbert.module import Module
+from rpbert.visual_linguistic_bert import VisualLinguisticBert
+from rpbert.resnet_model import resnet152
 BERT_WEIGHTS_NAME = 'pytorch_model.bin'
 
 
@@ -16,7 +16,7 @@ class ResNetVLBERT(Module):
         self.config = config
         self.pre_resnet = resnet152()
         self.pre_resnet.load_state_dict(torch.load('/home/data/datasets/resnet152-b121ed2d.pth'))
-        print('load resnet152 pretrained model')
+        print('load resnet152 pretrained rpbert')
         self.object_visual_embeddings = nn.Linear(2048, config.NETWORK.VLBERT.hidden_size)
         self.object_linguistic_embeddings = nn.Embedding(1, config.NETWORK.VLBERT.hidden_size)
         self.image_feature_bn_eval = config.NETWORK.IMAGE_FROZEN_BN

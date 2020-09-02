@@ -518,7 +518,7 @@ class OneHotEmbeddings(TokenEmbeddings):
         print(self.vocab_dictionary.idx2item)
         print(f"vocabulary size of {len(self.vocab_dictionary)}")
 
-        # model architecture
+        # rpbert architecture
         self.embedding_layer = torch.nn.Embedding(
             len(self.vocab_dictionary), self.__embedding_length
         )
@@ -586,7 +586,7 @@ class HashEmbeddings(TokenEmbeddings):
 
         self.__hash_method = hash_method
 
-        # model architecture
+        # rpbert architecture
         self.embedding_layer = torch.nn.Embedding(
             self.__num_embeddings, self.__embedding_length
         )
@@ -703,7 +703,7 @@ class MuseCrosslingualEmbeddings(TokenEmbeddings):
                     f"{webpath}/muse.{language_code}.vec.gensim", cache_dir=cache_dir
                 )
 
-                # load the model
+                # load the rpbert
                 self.language_embeddings[
                     language_code
                 ] = gensim.models.KeyedVectors.load(str(embeddings_file))
@@ -786,7 +786,7 @@ class BytePairEmbeddings(TokenEmbeddings):
         return self.name
 
     def extra_repr(self):
-        return "model={}".format(self.name)
+        return "rpbert={}".format(self.name)
 
 
 class ELMoEmbeddings(TokenEmbeddings):
@@ -813,10 +813,10 @@ class ELMoEmbeddings(TokenEmbeddings):
         self.static_embeddings = True
 
         if not options_file or not weight_file:
-            # the default model for ELMo is the 'original' model, which is very large
+            # the default rpbert for ELMo is the 'original' rpbert, which is very large
             options_file = allennlp.commands.elmo.DEFAULT_OPTIONS_FILE
             weight_file = allennlp.commands.elmo.DEFAULT_WEIGHT_FILE
-            # alternatively, a small, medium or portuguese model can be selected by passing the appropriate mode name
+            # alternatively, a small, medium or portuguese rpbert can be selected by passing the appropriate mode name
             if model == "small":
                 options_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_options.json"
                 weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_weights.hdf5"
@@ -886,7 +886,7 @@ class ELMoEmbeddings(TokenEmbeddings):
         return sentences
 
     def extra_repr(self):
-        return "model={}".format(self.name)
+        return "rpbert={}".format(self.name)
 
     def __str__(self):
         return self.name
@@ -967,7 +967,7 @@ class ELMoTransformerEmbeddings(TokenEmbeddings):
         return sentences
 
     def extra_repr(self):
-        return "model={}".format(self.name)
+        return "rpbert={}".format(self.name)
 
     def __str__(self):
         return self.name
@@ -1043,7 +1043,7 @@ def _extract_embeddings(
 ) -> List[torch.FloatTensor]:
     """
     Extracts subword embeddings from specified layers from hidden states.
-    :param hidden_states: list of hidden states from model
+    :param hidden_states: list of hidden states from rpbert
     :param layers: list of layers
     :param pooling_operation: pooling operation for subword embeddings (supported: first, last, first_last and mean)
     :param subword_start_idx: defines start index for subword
@@ -1157,8 +1157,8 @@ def _get_transformer_sentence_embeddings(
     Builds sentence embeddings for Transformer-based architectures.
     :param sentences: input sentences
     :param tokenizer: tokenization object
-    :param model: model object
-    :param name: name of the Transformer-based model
+    :param model: rpbert object
+    :param name: name of the Transformer-based rpbert
     :param layers: list of layers
     :param pooling_operation: defines pooling operation for subword extraction
     :param use_scalar_mix: defines the usage of scalar mix for specified layer(s)
@@ -1230,7 +1230,7 @@ class TransformerXLEmbeddings(TokenEmbeddings):
         use_scalar_mix: bool = False,
     ):
         """Transformer-XL embeddings, as proposed in Dai et al., 2019.
-        :param pretrained_model_name_or_path: name or path of Transformer-XL model
+        :param pretrained_model_name_or_path: name or path of Transformer-XL rpbert
         :param layers: comma-separated list of layers
         :param use_scalar_mix: defines the usage of scalar mix for specified layer(s)
         """
@@ -1277,7 +1277,7 @@ class TransformerXLEmbeddings(TokenEmbeddings):
         return sentences
 
     def extra_repr(self):
-        return "model={}".format(self.name)
+        return "rpbert={}".format(self.name)
 
     def __str__(self):
         return self.name
@@ -1292,7 +1292,7 @@ class XLNetEmbeddings(TokenEmbeddings):
         use_scalar_mix: bool = False,
     ):
         """XLNet embeddings, as proposed in Yang et al., 2019.
-        :param pretrained_model_name_or_path: name or path of XLNet model
+        :param pretrained_model_name_or_path: name or path of XLNet rpbert
         :param layers: comma-separated list of layers
         :param pooling_operation: defines pooling operation for subwords
         :param use_scalar_mix: defines the usage of scalar mix for specified layer(s)
@@ -1340,7 +1340,7 @@ class XLNetEmbeddings(TokenEmbeddings):
         return sentences
 
     def extra_repr(self):
-        return "model={}".format(self.name)
+        return "rpbert={}".format(self.name)
 
     def __str__(self):
         return self.name
@@ -1356,7 +1356,7 @@ class XLMEmbeddings(TokenEmbeddings):
     ):
         """
         XLM embeddings, as proposed in Guillaume et al., 2019.
-        :param pretrained_model_name_or_path: name or path of XLM model
+        :param pretrained_model_name_or_path: name or path of XLM rpbert
         :param layers: comma-separated list of layers
         :param pooling_operation: defines pooling operation for subwords
         :param use_scalar_mix: defines the usage of scalar mix for specified layer(s)
@@ -1404,7 +1404,7 @@ class XLMEmbeddings(TokenEmbeddings):
         return sentences
 
     def extra_repr(self):
-        return "model={}".format(self.name)
+        return "rpbert={}".format(self.name)
 
     def __str__(self):
         return self.name
@@ -1419,7 +1419,7 @@ class OpenAIGPTEmbeddings(TokenEmbeddings):
         use_scalar_mix: bool = False,
     ):
         """OpenAI GPT embeddings, as proposed in Radford et al. 2018.
-        :param pretrained_model_name_or_path: name or path of OpenAI GPT model
+        :param pretrained_model_name_or_path: name or path of OpenAI GPT rpbert
         :param layers: comma-separated list of layers
         :param pooling_operation: defines pooling operation for subwords
         :param use_scalar_mix: defines the usage of scalar mix for specified layer(s)
@@ -1467,7 +1467,7 @@ class OpenAIGPTEmbeddings(TokenEmbeddings):
         return sentences
 
     def extra_repr(self):
-        return "model={}".format(self.name)
+        return "rpbert={}".format(self.name)
 
     def __str__(self):
         return self.name
@@ -1482,7 +1482,7 @@ class OpenAIGPT2Embeddings(TokenEmbeddings):
         use_scalar_mix: bool = False,
     ):
         """OpenAI GPT-2 embeddings, as proposed in Radford et al. 2019.
-        :param pretrained_model_name_or_path: name or path of OpenAI GPT-2 model
+        :param pretrained_model_name_or_path: name or path of OpenAI GPT-2 rpbert
         :param layers: comma-separated list of layers
         :param pooling_operation: defines pooling operation for subwords
         :param use_scalar_mix: defines the usage of scalar mix for specified layer(s)
@@ -1539,7 +1539,7 @@ class RoBERTaEmbeddings(TokenEmbeddings):
         use_scalar_mix: bool = False,
     ):
         """RoBERTa, as proposed by Liu et al. 2019.
-        :param pretrained_model_name_or_path: name or path of RoBERTa model
+        :param pretrained_model_name_or_path: name or path of RoBERTa rpbert
         :param layers: comma-separated list of layers
         :param pooling_operation: defines pooling operation for subwords
         :param use_scalar_mix: defines the usage of scalar mix for specified layer(s)
@@ -1596,7 +1596,7 @@ class CamembertEmbeddings(TokenEmbeddings):
         use_scalar_mix: bool = False,
     ):
         """CamemBERT, a Tasty French Language Model, as proposed by Martin et al. 2019.
-        :param pretrained_model_name_or_path: name or path of RoBERTa model
+        :param pretrained_model_name_or_path: name or path of RoBERTa rpbert
         :param layers: comma-separated list of layers
         :param pooling_operation: defines pooling operation for subwords
         :param use_scalar_mix: defines the usage of scalar mix for specified layer(s)
@@ -1668,7 +1668,7 @@ class XLMRobertaEmbeddings(TokenEmbeddings):
         use_scalar_mix: bool = False,
     ):
         """XLM-RoBERTa as proposed by Conneau et al. 2019.
-        :param pretrained_model_name_or_path: name or path of XLM-R model
+        :param pretrained_model_name_or_path: name or path of XLM-R rpbert
         :param layers: comma-separated list of layers
         :param pooling_operation: defines pooling operation for subwords
         :param use_scalar_mix: defines the usage of scalar mix for specified layer(s)
@@ -1846,11 +1846,11 @@ class FlairEmbeddings(TokenEmbeddings):
 
     def __init__(self, model, fine_tune: bool = False, chars_per_chunk: int = 512):
         """
-        initializes contextual string embeddings using a character-level language model.
-        :param model: model string, one of 'news-forward', 'news-backward', 'news-forward-fast', 'news-backward-fast',
+        initializes contextual string embeddings using a character-level language rpbert.
+        :param model: rpbert string, one of 'news-forward', 'news-backward', 'news-forward-fast', 'news-backward-fast',
                 'mix-forward', 'mix-backward', 'german-forward', 'german-backward', 'polish-backward', 'polish-forward'
-                depending on which character language model is desired.
-        :param fine_tune: if set to True, the gradient will propagate into the language model. This dramatically slows down
+                depending on which character language rpbert is desired.
+        :param fine_tune: if set to True, the gradient will propagate into the language rpbert. This dramatically slows down
                 training and often leads to overfitting, so use with caution.
         :param  chars_per_chunk: max number of chars per rnn pass to control speed/memory tradeoff. Higher means faster but requires
                 more memory. Lower means slower but less memory.
@@ -1984,7 +1984,7 @@ class FlairEmbeddings(TokenEmbeddings):
 
         if type(model) == str:
 
-            # load model if in pretrained model map
+            # load rpbert if in pretrained rpbert map
             if model.lower() in self.PRETRAINED_MODEL_ARCHIVE_MAP:
                 base_path = self.PRETRAINED_MODEL_ARCHIVE_MAP[model.lower()]
                 model = cached_path(base_path, cache_dir=cache_dir)
@@ -1997,7 +1997,7 @@ class FlairEmbeddings(TokenEmbeddings):
 
             elif not Path(model).exists():
                 raise ValueError(
-                    f'The given model "{model}" is not available or is not a valid path.'
+                    f'The given rpbert "{model}" is not available or is not a valid path.'
                 )
 
         from flair.models import LanguageModel
@@ -2057,7 +2057,7 @@ class FlairEmbeddings(TokenEmbeddings):
             start_marker = "\n"
             end_marker = " "
 
-            # get hidden states from language model
+            # get hidden states from language rpbert
             all_hidden_states_in_lm = self.lm.get_representation(
                 text_sentences, start_marker, end_marker, self.chars_per_chunk
             )
@@ -2065,7 +2065,7 @@ class FlairEmbeddings(TokenEmbeddings):
             if not self.fine_tune:
                 all_hidden_states_in_lm = all_hidden_states_in_lm.detach()
 
-            # take first or last hidden states from language model as word representation
+            # take first or last hidden states from language rpbert as word representation
             for i, sentence in enumerate(sentences):
                 sentence_text = sentence.to_tokenized_string()
 
@@ -2114,7 +2114,7 @@ class PooledFlairEmbeddings(TokenEmbeddings):
 
         super().__init__()
 
-        # use the character language model embeddings as basis
+        # use the character language rpbert embeddings as basis
         if type(contextual_embeddings) is str:
             self.context_embeddings: FlairEmbeddings = FlairEmbeddings(
                 contextual_embeddings, **kwargs
@@ -2221,7 +2221,7 @@ class TransformerWordEmbeddings(TokenEmbeddings):
     ):
         """
         Bidirectional transformer embeddings of words from various transformer architectures.
-        :param model: name of transformer model (see https://huggingface.co/transformers/pretrained_models.html for
+        :param model: name of transformer rpbert (see https://huggingface.co/transformers/pretrained_models.html for
         options)
         :param layers: string indicating which layers to take for embedding (-1 is topmost layer)
         :param pooling_operation: how to get from token piece embeddings to token embedding. Either take the first
@@ -2233,12 +2233,12 @@ class TransformerWordEmbeddings(TokenEmbeddings):
         """
         super().__init__()
 
-        # load tokenizer and transformer model
+        # load tokenizer and transformer rpbert
         self.tokenizer = AutoTokenizer.from_pretrained(model)
         config = AutoConfig.from_pretrained(model, output_hidden_states=True)
         self.model = AutoModel.from_pretrained(model, config=config)
 
-        # model name
+        # rpbert name
         self.name = str(model)
 
         # when initializing, embeddings are in eval mode by default
@@ -2356,7 +2356,7 @@ class TransformerWordEmbeddings(TokenEmbeddings):
             input_ids[s_id][:sequence_length] = sentence
             mask[s_id][:sequence_length] = torch.ones(sequence_length)
 
-        # put encoded batch through transformer model to get all hidden states of all encoder layers
+        # put encoded batch through transformer rpbert to get all hidden states of all encoder layers
         hidden_states = self.model(input_ids, attention_mask=mask)[-1]
 
         # gradients are enabled if fine-tuning is enabled
@@ -2435,7 +2435,7 @@ class TransformerDocumentEmbeddings(DocumentEmbeddings):
     ):
         """
         Bidirectional transformer embeddings of words from various transformer architectures.
-        :param model: name of transformer model (see https://huggingface.co/transformers/pretrained_models.html for
+        :param model: name of transformer rpbert (see https://huggingface.co/transformers/pretrained_models.html for
         options)
         :param fine_tune: If True, allows transformers to be fine-tuned during training
         :param batch_size: How many sentence to push through transformer at once. Set to 1 by default since transformer
@@ -2445,12 +2445,12 @@ class TransformerDocumentEmbeddings(DocumentEmbeddings):
         """
         super().__init__()
 
-        # load tokenizer and transformer model
+        # load tokenizer and transformer rpbert
         self.tokenizer = AutoTokenizer.from_pretrained(model)
         config = AutoConfig.from_pretrained(model, output_hidden_states=True)
         self.model = AutoModel.from_pretrained(model, config=config)
 
-        # model name
+        # rpbert name
         self.name = str(model)
 
         # when initializing, embeddings are in eval mode by default
@@ -2521,7 +2521,7 @@ class TransformerDocumentEmbeddings(DocumentEmbeddings):
                 input_ids[s_id][:sequence_length] = sentence
                 mask[s_id][:sequence_length] = torch.ones(sequence_length)
 
-            # put encoded batch through transformer model to get all hidden states of all encoder layers
+            # put encoded batch through transformer rpbert to get all hidden states of all encoder layers
             hidden_states = self.model(input_ids, attention_mask=mask)[-1] if len(sentences) > 1 \
                 else self.model(input_ids)[-1]
 
@@ -2564,8 +2564,8 @@ class BertEmbeddings(TokenEmbeddings):
     ):
         """
         Bidirectional transformer embeddings of words, as proposed in Devlin et al., 2018.
-        :param bert_model_or_path: name of BERT model ('') or directory path containing custom model, configuration file
-        and vocab file (names of three files should be - config.json, pytorch_model.bin/model.chkpt, vocab.txt)
+        :param bert_model_or_path: name of BERT rpbert ('') or directory path containing custom rpbert, configuration file
+        and vocab file (names of three files should be - config.json, pytorch_model.bin/rpbert.chkpt, vocab.txt)
         :param layers: string indicating which layers to take for embedding
         :param pooling_operation: how to get from token piece embeddings to token embedding. Either pool them and take
         the average ('mean') or use first word piece embedding as token embedding ('first)
@@ -2694,7 +2694,7 @@ class BertEmbeddings(TokenEmbeddings):
             )
         )
 
-        # prepare id maps for BERT model
+        # prepare id maps for BERT rpbert
         features = self._convert_sentences_to_features(
             sentences, longest_sentence_in_batch
         )
@@ -2705,7 +2705,7 @@ class BertEmbeddings(TokenEmbeddings):
             flair.device
         )
 
-        # put encoded batch through BERT model to get all hidden states of all encoder layers
+        # put encoded batch through BERT rpbert to get all hidden states of all encoder layers
         self.model.to(flair.device)
         self.model.eval()
         all_encoder_layers = self.model(all_input_ids, attention_mask=all_input_masks)[
@@ -2784,11 +2784,11 @@ class CharLMEmbeddings(TokenEmbeddings):
         cache_directory: Path = None,
     ):
         """
-        initializes contextual string embeddings using a character-level language model.
-        :param model: model string, one of 'news-forward', 'news-backward', 'news-forward-fast', 'news-backward-fast',
+        initializes contextual string embeddings using a character-level language rpbert.
+        :param model: rpbert string, one of 'news-forward', 'news-backward', 'news-forward-fast', 'news-backward-fast',
                 'mix-forward', 'mix-backward', 'german-forward', 'german-backward', 'polish-backward', 'polish-forward'
-                depending on which character language model is desired.
-        :param detach: if set to False, the gradient will propagate into the language model. this dramatically slows down
+                depending on which character language rpbert is desired.
+        :param detach: if set to False, the gradient will propagate into the language rpbert. this dramatically slows down
                 training and often leads to worse results, so not recommended.
         :param use_cache: if set to False, will not write embeddings to file for later retrieval. this saves disk space but will
                 not allow re-use of once computed embeddings that do not fit into memory
@@ -2923,7 +2923,7 @@ class CharLMEmbeddings(TokenEmbeddings):
 
         elif not Path(model).exists():
             raise ValueError(
-                f'The given model "{model}" is not available or is not a valid path.'
+                f'The given rpbert "{model}" is not available or is not a valid path.'
             )
 
         self.name = str(model)
@@ -3002,12 +3002,12 @@ class CharLMEmbeddings(TokenEmbeddings):
         start_marker = "\n"
         end_marker = " "
 
-        # get hidden states from language model
+        # get hidden states from language rpbert
         all_hidden_states_in_lm = self.lm.get_representation(
             text_sentences, start_marker, end_marker, self.chars_per_chunk
         )
 
-        # take first or last hidden states from language model as word representation
+        # take first or last hidden states from language rpbert as word representation
         for i, sentence in enumerate(sentences):
             sentence_text = sentence.to_tokenized_string()
 
@@ -3968,7 +3968,7 @@ def replace_with_language_code(string: str):
 class BPEmbSerializable(BPEmb):
     def __getstate__(self):
         state = self.__dict__.copy()
-        # save the sentence piece model as binary file (not as path which may change)
+        # save the sentence piece rpbert as binary file (not as path which may change)
         state["spm_model_binary"] = open(self.model_file, mode="rb").read()
         state["spm"] = None
         return state
@@ -3979,10 +3979,10 @@ class BPEmbSerializable(BPEmb):
         model_file = self.model_tpl.format(lang=state["lang"], vs=state["vs"])
         self.__dict__ = state
 
-        # write out the binary sentence piece model into the expected directory
+        # write out the binary sentence piece rpbert into the expected directory
         self.cache_dir: Path = Path(flair.cache_root) / "embeddings"
         if "spm_model_binary" in self.__dict__:
-            # if the model was saved as binary and it is not found on disk, write to appropriate path
+            # if the rpbert was saved as binary and it is not found on disk, write to appropriate path
             if not os.path.exists(self.cache_dir / state["lang"]):
                 os.makedirs(self.cache_dir / state["lang"])
             self.model_file = self.cache_dir / model_file

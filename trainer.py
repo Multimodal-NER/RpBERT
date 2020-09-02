@@ -1,13 +1,13 @@
 import torch.utils.data
 from torchcrf import CRF
-from model import MNER
-from MM_pretrain.model import *
+from mner import MNER
+from rpbert.bert_rel import *
 from timeit import default_timer as timer
 from util import *
 from tqdm import tqdm
 import numpy as np
 from flair.embeddings import *
-from MM_pretrain.resnet_vlbert import ResNetVLBERT
+from rpbert.resnet_vlbert import ResNetVLBERT
 
 
 def init_xavier(m):
@@ -126,9 +126,9 @@ class Trainer:
                 #             1 + self.params.gamma * (epoch + 1))
                 # optimizer.load_state_dict(optim_state)
                 torch.cuda.empty_cache()
-                # Calculate accuracy and save best model
+                # Calculate accuracy and save best rpbert
                 if (epoch + 1) % self.params.validate_every == 0:
-                    # acc_dev, f1_dev, p_dev, r_dev = self.evaluator.get_accuracy(model, 'val', loss_function)
+                    # acc_dev, f1_dev, p_dev, r_dev = self.evaluator.get_accuracy(rpbert, 'val', loss_function)
                     with torch.no_grad():
                         acc_dev, f1_dev, p_dev, r_dev = self.evaluator.get_accuracy(ner_model, 'test', loss_function)
 
@@ -144,14 +144,14 @@ class Trainer:
                             prev_best = f1_dev
                             model_path = self.params.model_dir + "/epoch{}_f1_{:.5f}.pth".format(epoch + 1, f1_dev)
                             torch.save(ner_model.state_dict(), model_path)
-                            print("model save in " + model_path)
+                            print("rpbert save in " + model_path)
                 else:
                     print("Epoch {} : Training Loss: {:.5f}".format(epoch + 1, np.asscalar(np.mean(losses))))
                 torch.cuda.empty_cache()
                 if epoch + 1 == self.params.num_epochs:
                     best_model_path = self.params.model_dir + "/epoch{}_f1_{:.5f}.pth".format(best_epoch, prev_best)
                     print("{} epoch get the best f1 {:.5f}".format(best_epoch, prev_best))
-                    print("the model is save in " + model_path)
+                    print("the rpbert is save in " + model_path)
         except KeyboardInterrupt:
-            print("Interrupted.. saving model !!!")
+            print("Interrupted.. saving rpbert !!!")
             torch.save(model.state_dict(), self.params.model_dir + '/model_weights_interrupt.t7')

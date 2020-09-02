@@ -135,7 +135,7 @@ class LanguageModel(nn.Module):
         padding_char_index = self.dictionary.get_idx_for_item(" ")
 
         batches: List[torch.Tensor] = []
-        # push each chunk through the RNN language model
+        # push each chunk through the RNN language rpbert
         for chunk in chunks:
             len_longest_chunk: int = len(max(chunk, key=len))
             sequences_as_char_indices: List[List[int]] = []
@@ -227,7 +227,7 @@ class LanguageModel(nn.Module):
         model.to(flair.device)
 
         return {
-            "model": model,
+            "rpbert": model,
             "epoch": epoch,
             "split": split,
             "loss": loss,
@@ -368,7 +368,7 @@ class LanguageModel(nn.Module):
         ).unsqueeze(1)
         input = input.to(flair.device)
 
-        # push list of character IDs through model
+        # push list of character IDs through rpbert
         hidden = self.init_hidden(1)
         prediction, _, hidden = self.forward(input, hidden)
 

@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""PyTorch BERT model."""
+"""PyTorch BERT rpbert."""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -49,12 +49,12 @@ PRETRAINED_MODEL_ARCHIVE_MAP = {
 
 CONFIG_NAME = 'bert_config.json'
 WEIGHTS_NAME = 'pytorch_model.bin'
-TF_WEIGHTS_NAME = 'model.ckpt'
+TF_WEIGHTS_NAME = 'rpbert.ckpt'
 attn_mask_visual = None
 
 
 def load_tf_weights_in_bert(model, tf_checkpoint_path):
-    """ Load tf checkpoints in a pytorch model
+    """ Load tf checkpoints in a pytorch rpbert
     """
     try:
         import re
@@ -66,7 +66,7 @@ def load_tf_weights_in_bert(model, tf_checkpoint_path):
         raise
     tf_path = os.path.abspath(tf_checkpoint_path)
     print("Converting TensorFlow checkpoint from {}".format(tf_path))
-    # Load weights from TF model
+    # Load weights from TF rpbert
     init_vars = tf.train.list_variables(tf_path)
     names = []
     arrays = []
@@ -79,7 +79,7 @@ def load_tf_weights_in_bert(model, tf_checkpoint_path):
     for name, array in zip(names, arrays):
         name = name.split('/')
         # adam_v and adam_m are variables used in AdamWeightDecayOptimizer to calculated m and v
-        # which are not required for using pretrained model
+        # which are not required for using pretrained rpbert
         if any(n in ["adam_v", "adam_m"] for n in name):
             print("Skipping {}".format("/".join(name)))
             continue
@@ -161,7 +161,7 @@ class BertConfig(object):
                 layers in the embeddings, encoder, and pooler.
             attention_probs_dropout_prob: The dropout ratio for the attention
                 probabilities.
-            max_position_embeddings: The maximum sequence length that this model might
+            max_position_embeddings: The maximum sequence length that this rpbert might
                 ever be used with. Typically set this to something large just in case
                 (e.g., 512 or 1024 or 2048).
             type_vocab_size: The vocabulary size of the `token_type_ids` passed into
@@ -189,7 +189,7 @@ class BertConfig(object):
             self.initializer_range = initializer_range
         else:
             raise ValueError("First argument must be either a vocabulary size (int)"
-                             "or the path to a pretrained model config file (str)")
+                             "or the path to a pretrained rpbert config file (str)")
 
     @classmethod
     def from_dict(cls, json_object):
@@ -246,7 +246,7 @@ class BertEmbeddings(nn.Module):
         self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
         self.token_type_embeddings = nn.Embedding(config.type_vocab_size, config.hidden_size)
 
-        # self.LayerNorm is not snake-cased to stick with TensorFlow model variable name and be able to load
+        # self.LayerNorm is not snake-cased to stick with TensorFlow rpbert variable name and be able to load
         # any TensorFlow checkpoint file
         self.LayerNorm = BertLayerNorm(config.hidden_size, eps=1e-12)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
@@ -437,7 +437,7 @@ class BertPooler(nn.Module):
         self.activation = nn.Tanh()
 
     def forward(self, hidden_states):
-        # We "pool" the model by simply taking the hidden state corresponding
+        # We "pool" the rpbert by simply taking the hidden state corresponding
         # to the first token.
         first_token_tensor = hidden_states[:, 0]
         pooled_output = self.dense(first_token_tensor)
@@ -522,8 +522,8 @@ class BertPreTrainedModel(nn.Module):
         if not isinstance(config, BertConfig):
             raise ValueError(
                 "Parameter config in `{}(config)` should be an instance of class `BertConfig`. "
-                "To create a model from a Google pretrained model use "
-                "`model = {}.from_pretrained(PRETRAINED_MODEL_NAME)`".format(
+                "To create a rpbert from a Google pretrained rpbert use "
+                "`rpbert = {}.from_pretrained(PRETRAINED_MODEL_NAME)`".format(
                     self.__class__.__name__, self.__class__.__name__
                 ))
         self.config = config
@@ -545,12 +545,12 @@ class BertPreTrainedModel(nn.Module):
     def from_pretrained(cls, pretrained_model_name_or_path, state_dict=None, cache_dir=None,
                         from_tf=False, *inputs, **kwargs):
         """
-        Instantiate a BertPreTrainedModel from a pre-trained model file or a pytorch state dict.
-        Download and cache the pre-trained model file if needed.
+        Instantiate a BertPreTrainedModel from a pre-trained rpbert file or a pytorch state dict.
+        Download and cache the pre-trained rpbert file if needed.
 
         Params:
             pretrained_model_name_or_path: either:
-                - a str with the name of a pre-trained model to load selected in the list of:
+                - a str with the name of a pre-trained rpbert to load selected in the list of:
                     . `bert-base-uncased`
                     . `bert-large-uncased`
                     . `bert-base-cased`
@@ -558,12 +558,12 @@ class BertPreTrainedModel(nn.Module):
                     . `bert-base-multilingual-uncased`
                     . `bert-base-multilingual-cased`
                     . `bert-base-chinese`
-                - a path or url to a pretrained model archive containing:
-                    . `bert_config.json` a configuration file for the model
+                - a path or url to a pretrained rpbert archive containing:
+                    . `bert_config.json` a configuration file for the rpbert
                     . `pytorch_model.bin` a PyTorch dump of a BertForPreTraining instance
-                - a path or url to a pretrained model archive containing:
-                    . `bert_config.json` a configuration file for the model
-                    . `model.chkpt` a TensorFlow checkpoint
+                - a path or url to a pretrained rpbert archive containing:
+                    . `bert_config.json` a configuration file for the rpbert
+                    . `rpbert.chkpt` a TensorFlow checkpoint
             from_tf: should we load the weights from a locally saved TensorFlow checkpoint
             cache_dir: an optional path to a folder in which the pre-trained models will be cached.
             state_dict: an optional state dictionnary (collections.OrderedDict object) to use instead of Google pre-trained models
@@ -579,7 +579,7 @@ class BertPreTrainedModel(nn.Module):
             resolved_archive_file = cached_path(archive_file, cache_dir=cache_dir)
         except EnvironmentError:
             logger.error(
-                "Model name '{}' was not found in model name list ({}). "
+                "Model name '{}' was not found in rpbert name list ({}). "
                 "We assumed '{}' was a path or url but couldn't find any file "
                 "associated to this path or url.".format(
                     pretrained_model_name_or_path,
@@ -606,7 +606,7 @@ class BertPreTrainedModel(nn.Module):
         config_file = os.path.join(serialization_dir, CONFIG_NAME)
         config = BertConfig.from_json_file(config_file)
         logger.info("Model config {}".format(config))
-        # Instantiate model.
+        # Instantiate rpbert.
         model = cls(config, *inputs, **kwargs)
         if state_dict is None and not from_tf:
             weights_path = os.path.join(serialization_dir, WEIGHTS_NAME)
@@ -654,10 +654,10 @@ class BertPreTrainedModel(nn.Module):
             start_prefix = 'bert.'
         load(model, prefix=start_prefix)
         if len(missing_keys) > 0:
-            logger.info("Weights of {} not initialized from pretrained model: {}".format(
+            logger.info("Weights of {} not initialized from pretrained rpbert: {}".format(
                 model.__class__.__name__, missing_keys))
         if len(unexpected_keys) > 0:
-            logger.info("Weights from pretrained model not used in {}: {}".format(
+            logger.info("Weights from pretrained rpbert not used in {}: {}".format(
                 model.__class__.__name__, unexpected_keys))
         if len(error_msgs) > 0:
             raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
@@ -666,10 +666,10 @@ class BertPreTrainedModel(nn.Module):
 
 
 class BertModel(BertPreTrainedModel):
-    """BERT model ("Bidirectional Embedding Representations from a Transformer").
+    """BERT rpbert ("Bidirectional Embedding Representations from a Transformer").
 
     Params:
-        config: a BertConfig class instance with the configuration to build a new model
+        config: a BertConfig class instance with the configuration to build a new rpbert
 
     Inputs:
         `input_ids`: a torch.LongTensor of shape [batch_size, sequence_length]
@@ -705,8 +705,8 @@ class BertModel(BertPreTrainedModel):
     config = modeling.BertConfig(vocab_size_or_config_json_file=32000, hidden_size=768,
         num_hidden_layers=12, num_attention_heads=12, intermediate_size=3072)
 
-    model = modeling.BertModel(config=config)
-    all_encoder_layers, pooled_output = model(input_ids, token_type_ids, input_mask)
+    rpbert = modeling.BertModel(config=config)
+    all_encoder_layers, pooled_output = rpbert(input_ids, token_type_ids, input_mask)
     ```
     """
     def __init__(self, config):
@@ -749,13 +749,13 @@ class BertModel(BertPreTrainedModel):
 
 
 class BertForPreTraining(BertPreTrainedModel):
-    """BERT model with pre-training heads.
-    This module comprises the BERT model followed by the two pre-training heads:
+    """BERT rpbert with pre-training heads.
+    This module comprises the BERT rpbert followed by the two pre-training heads:
         - the masked language modeling head, and
         - the next sentence classification head.
 
     Params:
-        config: a BertConfig class instance with the configuration to build a new model.
+        config: a BertConfig class instance with the configuration to build a new rpbert.
 
     Inputs:
         `input_ids`: a torch.LongTensor of shape [batch_size, sequence_length]
@@ -794,8 +794,8 @@ class BertForPreTraining(BertPreTrainedModel):
     config = BertConfig(vocab_size_or_config_json_file=32000, hidden_size=768,
         num_hidden_layers=12, num_attention_heads=12, intermediate_size=3072)
 
-    model = BertForPreTraining(config)
-    masked_lm_logits_scores, seq_relationship_logits = model(input_ids, token_type_ids, input_mask)
+    rpbert = BertForPreTraining(config)
+    masked_lm_logits_scores, seq_relationship_logits = rpbert(input_ids, token_type_ids, input_mask)
     ```
     """
     def __init__(self, config):
@@ -820,11 +820,11 @@ class BertForPreTraining(BertPreTrainedModel):
 
 
 class BertForMaskedLM(BertPreTrainedModel):
-    """BERT model with the masked language modeling head.
-    This module comprises the BERT model followed by the masked language modeling head.
+    """BERT rpbert with the masked language modeling head.
+    This module comprises the BERT rpbert followed by the masked language modeling head.
 
     Params:
-        config: a BertConfig class instance with the configuration to build a new model.
+        config: a BertConfig class instance with the configuration to build a new rpbert.
 
     Inputs:
         `input_ids`: a torch.LongTensor of shape [batch_size, sequence_length]
@@ -857,8 +857,8 @@ class BertForMaskedLM(BertPreTrainedModel):
     config = BertConfig(vocab_size_or_config_json_file=32000, hidden_size=768,
         num_hidden_layers=12, num_attention_heads=12, intermediate_size=3072)
 
-    model = BertForMaskedLM(config)
-    masked_lm_logits_scores = model(input_ids, token_type_ids, input_mask)
+    rpbert = BertForMaskedLM(config)
+    masked_lm_logits_scores = rpbert(input_ids, token_type_ids, input_mask)
     ```
     """
     def __init__(self, config):
@@ -881,11 +881,11 @@ class BertForMaskedLM(BertPreTrainedModel):
 
 
 class BertForNextSentencePrediction(BertPreTrainedModel):
-    """BERT model with next sentence prediction head.
-    This module comprises the BERT model followed by the next sentence classification head.
+    """BERT rpbert with next sentence prediction head.
+    This module comprises the BERT rpbert followed by the next sentence classification head.
 
     Params:
-        config: a BertConfig class instance with the configuration to build a new model.
+        config: a BertConfig class instance with the configuration to build a new rpbert.
 
     Inputs:
         `input_ids`: a torch.LongTensor of shape [batch_size, sequence_length]
@@ -919,8 +919,8 @@ class BertForNextSentencePrediction(BertPreTrainedModel):
     config = BertConfig(vocab_size_or_config_json_file=32000, hidden_size=768,
         num_hidden_layers=12, num_attention_heads=12, intermediate_size=3072)
 
-    model = BertForNextSentencePrediction(config)
-    seq_relationship_logits = model(input_ids, token_type_ids, input_mask)
+    rpbert = BertForNextSentencePrediction(config)
+    seq_relationship_logits = rpbert(input_ids, token_type_ids, input_mask)
     ```
     """
     def __init__(self, config):
@@ -943,12 +943,12 @@ class BertForNextSentencePrediction(BertPreTrainedModel):
 
 
 class BertForSequenceClassification(BertPreTrainedModel):
-    """BERT model for classification.
-    This module is composed of the BERT model with a linear layer on top of
+    """BERT rpbert for classification.
+    This module is composed of the BERT rpbert with a linear layer on top of
     the pooled output.
 
     Params:
-        `config`: a BertConfig class instance with the configuration to build a new model.
+        `config`: a BertConfig class instance with the configuration to build a new rpbert.
         `num_labels`: the number of classes for the classifier. Default = 2.
 
     Inputs:
@@ -983,8 +983,8 @@ class BertForSequenceClassification(BertPreTrainedModel):
 
     num_labels = 2
 
-    model = BertForSequenceClassification(config, num_labels)
-    logits = model(input_ids, token_type_ids, input_mask)
+    rpbert = BertForSequenceClassification(config, num_labels)
+    logits = rpbert(input_ids, token_type_ids, input_mask)
     ```
     """
     def __init__(self, config, num_labels):
@@ -1009,12 +1009,12 @@ class BertForSequenceClassification(BertPreTrainedModel):
 
 
 class BertForMultipleChoice(BertPreTrainedModel):
-    """BERT model for multiple choice tasks.
-    This module is composed of the BERT model with a linear layer on top of
+    """BERT rpbert for multiple choice tasks.
+    This module is composed of the BERT rpbert with a linear layer on top of
     the pooled output.
 
     Params:
-        `config`: a BertConfig class instance with the configuration to build a new model.
+        `config`: a BertConfig class instance with the configuration to build a new rpbert.
         `num_choices`: the number of classes for the classifier. Default = 2.
 
     Inputs:
@@ -1048,8 +1048,8 @@ class BertForMultipleChoice(BertPreTrainedModel):
 
     num_choices = 2
 
-    model = BertForMultipleChoice(config, num_choices)
-    logits = model(input_ids, token_type_ids, input_mask)
+    rpbert = BertForMultipleChoice(config, num_choices)
+    logits = rpbert(input_ids, token_type_ids, input_mask)
     ```
     """
     def __init__(self, config, num_choices):
@@ -1078,12 +1078,12 @@ class BertForMultipleChoice(BertPreTrainedModel):
 
 
 class BertForTokenClassification(BertPreTrainedModel):
-    """BERT model for token-level classification.
-    This module is composed of the BERT model with a linear layer on top of
+    """BERT rpbert for token-level classification.
+    This module is composed of the BERT rpbert with a linear layer on top of
     the full hidden state of the last layer.
 
     Params:
-        `config`: a BertConfig class instance with the configuration to build a new model.
+        `config`: a BertConfig class instance with the configuration to build a new rpbert.
         `num_labels`: the number of classes for the classifier. Default = 2.
 
     Inputs:
@@ -1118,8 +1118,8 @@ class BertForTokenClassification(BertPreTrainedModel):
 
     num_labels = 2
 
-    model = BertForTokenClassification(config, num_labels)
-    logits = model(input_ids, token_type_ids, input_mask)
+    rpbert = BertForTokenClassification(config, num_labels)
+    logits = rpbert(input_ids, token_type_ids, input_mask)
     ```
     """
     def __init__(self, config, num_labels):
@@ -1151,12 +1151,12 @@ class BertForTokenClassification(BertPreTrainedModel):
 
 
 class BertForQuestionAnswering(BertPreTrainedModel):
-    """BERT model for Question Answering (span extraction).
-    This module is composed of the BERT model with a linear layer on top of
+    """BERT rpbert for Question Answering (span extraction).
+    This module is composed of the BERT rpbert with a linear layer on top of
     the sequence output that computes start_logits and end_logits
 
     Params:
-        `config`: a BertConfig class instance with the configuration to build a new model.
+        `config`: a BertConfig class instance with the configuration to build a new rpbert.
 
     Inputs:
         `input_ids`: a torch.LongTensor of shape [batch_size, sequence_length]
@@ -1193,8 +1193,8 @@ class BertForQuestionAnswering(BertPreTrainedModel):
     config = BertConfig(vocab_size_or_config_json_file=32000, hidden_size=768,
         num_hidden_layers=12, num_attention_heads=12, intermediate_size=3072)
 
-    model = BertForQuestionAnswering(config)
-    start_logits, end_logits = model(input_ids, token_type_ids, input_mask)
+    rpbert = BertForQuestionAnswering(config)
+    start_logits, end_logits = rpbert(input_ids, token_type_ids, input_mask)
     ```
     """
     def __init__(self, config):
@@ -1218,7 +1218,7 @@ class BertForQuestionAnswering(BertPreTrainedModel):
                 start_positions = start_positions.squeeze(-1)
             if len(end_positions.size()) > 1:
                 end_positions = end_positions.squeeze(-1)
-            # sometimes the start/end positions are outside our model inputs, we ignore these terms
+            # sometimes the start/end positions are outside our rpbert inputs, we ignore these terms
             ignored_index = start_logits.size(1)
             start_positions.clamp_(0, ignored_index)
             end_positions.clamp_(0, ignored_index)

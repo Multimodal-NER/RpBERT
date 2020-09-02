@@ -80,8 +80,8 @@ class OpenAIGPTTokenizer(object):
     @classmethod
     def from_pretrained(cls, pretrained_model_name_or_path, cache_dir=None, *inputs, **kwargs):
         """
-        Instantiate a PreTrainedBertModel from a pre-trained model file.
-        Download and cache the pre-trained model file if needed.
+        Instantiate a PreTrainedBertModel from a pre-trained rpbert file.
+        Download and cache the pre-trained rpbert file if needed.
         """
         if pretrained_model_name_or_path in PRETRAINED_VOCAB_ARCHIVE_MAP:
             vocab_file = PRETRAINED_VOCAB_ARCHIVE_MAP[pretrained_model_name_or_path]
@@ -95,7 +95,7 @@ class OpenAIGPTTokenizer(object):
             resolved_merges_file = cached_path(merges_file, cache_dir=cache_dir)
         except EnvironmentError:
             logger.error(
-                "Model name '{}' was not found in model name list ({}). "
+                "Model name '{}' was not found in rpbert name list ({}). "
                 "We assumed '{}' was a path or url but couldn't find files {} and {} "
                 "at this path or url.".format(
                     pretrained_model_name_or_path,
@@ -112,7 +112,7 @@ class OpenAIGPTTokenizer(object):
             logger.info("loading merges file {} from cache at {}".format(
                 merges_file, resolved_merges_file))
         if pretrained_model_name_or_path in PRETRAINED_VOCAB_POSITIONAL_EMBEDDINGS_SIZE_MAP:
-            # if we're using a pretrained model, ensure the tokenizer wont index sequences longer
+            # if we're using a pretrained rpbert, ensure the tokenizer wont index sequences longer
             # than the number of positional embeddings
             max_len = PRETRAINED_VOCAB_POSITIONAL_EMBEDDINGS_SIZE_MAP[pretrained_model_name_or_path]
             kwargs['max_len'] = min(kwargs.get('max_len', int(1e12)), max_len)
@@ -234,8 +234,8 @@ class OpenAIGPTTokenizer(object):
         if len(ids) > self.max_len:
             raise ValueError(
                 "Token indices sequence length is longer than the specified maximum "
-                " sequence length for this OpenAI GPT model ({} > {}). Running this"
-                " sequence through the model will result in indexing errors".format(len(ids), self.max_len)
+                " sequence length for this OpenAI GPT rpbert ({} > {}). Running this"
+                " sequence through the rpbert will result in indexing errors".format(len(ids), self.max_len)
             )
         return ids
 

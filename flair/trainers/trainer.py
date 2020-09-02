@@ -45,11 +45,11 @@ class ModelTrainer:
         use_tensorboard: bool = False,
     ):
         """
-        Initialize a model trainer
-        :param model: The model that you want to train. The model should inherit from flair.nn.Model
-        :param corpus: The dataset used to train the model, should be of type Corpus
+        Initialize a rpbert trainer
+        :param model: The rpbert that you want to train. The rpbert should inherit from flair.nn.Model
+        :param corpus: The dataset used to train the rpbert, should be of type Corpus
         :param optimizer: The optimizer to use (typically SGD or Adam)
-        :param epoch: The starting epoch (normally 0 but could be higher if you continue training model)
+        :param epoch: The starting epoch (normally 0 but could be higher if you continue training rpbert)
         :param use_tensorboard: If True, writes out tensorboard information
         """
         self.model: flair.nn.Model = model
@@ -104,8 +104,8 @@ class ModelTrainer:
         :param embeddings_storage_mode: One of 'none' (all embeddings are deleted and freshly recomputed),
         'cpu' (embeddings are stored on CPU) or 'gpu' (embeddings are stored on GPU)
         :param checkpoint: If True, a full checkpoint is saved at end of each epoch
-        :param save_final_model: If True, final model is saved
-        :param anneal_with_restarts: If True, the last best model is restored when annealing the learning rate
+        :param save_final_model: If True, final rpbert is saved
+        :param anneal_with_restarts: If True, the last best rpbert is restored when annealing the learning rate
         :param shuffle: If True, data is shuffled during training
         :param param_selection_mode: If True, testing is performed against dev data. Use this mode when doing
         parameter selection.
@@ -274,19 +274,19 @@ class ModelTrainer:
                 if learning_rate != previous_learning_rate and batch_growth_annealing:
                     mini_batch_size *= 2
 
-                # reload last best model if annealing with restarts is enabled
+                # reload last best rpbert if annealing with restarts is enabled
                 if (
                     learning_rate != previous_learning_rate
-                    and (base_path / "best-model.pt").exists()
+                    and (base_path / "best-rpbert.pt").exists()
                 ):
-                    log.info("resetting to best model")
+                    log.info("resetting to best rpbert")
                     if anneal_with_restarts:
                         self.model.load_state_dict(
-                            self.model.load(base_path / "best-model.pt").state_dict()
+                            self.model.load(base_path / "best-rpbert.pt").state_dict()
                         )
                     if anneal_with_prestarts:
                         self.model.load_state_dict(
-                            self.model.load(base_path / "pre-best-model.pt").state_dict()
+                            self.model.load(base_path / "pre-best-rpbert.pt").state_dict()
                         )
 
 
@@ -321,7 +321,7 @@ class ModelTrainer:
                 for batch_no, batch in enumerate(batch_loader):
                     start_time = time.time()
 
-                    # zero the gradients on the model and optimizer
+                    # zero the gradients on the rpbert and optimizer
                     self.model.zero_grad()
                     optimizer.zero_grad()
 
@@ -529,26 +529,26 @@ class ModelTrainer:
                     )
                     f.write(result_line)
 
-                # if checkpoint is enabled, save model at each epoch
+                # if checkpoint is enabled, save rpbert at each epoch
                 if checkpoint and not param_selection_mode:
                     self.save_checkpoint(base_path / "checkpoint.pt")
 
-                # if we use dev data, remember best model based on dev evaluation score
+                # if we use dev data, remember best rpbert based on dev evaluation score
                 if (
                     (not train_with_dev or anneal_with_restarts or anneal_with_prestarts)
                     and not param_selection_mode
                     and current_score == scheduler.best
                 ):
-                    print("saving best model")
-                    self.model.save(base_path / "best-model.pt")
+                    print("saving best rpbert")
+                    self.model.save(base_path / "best-rpbert.pt")
                     current_state_dict = self.model.state_dict()
                     self.model.load_state_dict(last_epoch_model_state_dict)
-                    self.model.save(base_path / "pre-best-model.pt")
+                    self.model.save(base_path / "pre-best-rpbert.pt")
                     self.model.load_state_dict(current_state_dict)
 
-            # if we do not use dev data for model selection, save final model
+            # if we do not use dev data for rpbert selection, save final rpbert
             if save_final_model and not param_selection_mode:
-                self.model.save(base_path / "final-model.pt")
+                self.model.save(base_path / "final-rpbert.pt")
 
         except KeyboardInterrupt:
             log_line(log)
@@ -558,11 +558,11 @@ class ModelTrainer:
                 writer.close()
 
             if not param_selection_mode:
-                log.info("Saving model ...")
-                self.model.save(base_path / "final-model.pt")
+                log.info("Saving rpbert ...")
+                self.model.save(base_path / "final-rpbert.pt")
                 log.info("Done.")
 
-        # test best model if test data is present
+        # test best rpbert if test data is present
         if self.corpus.test:
             final_score = self.final_test(base_path, mini_batch_chunk_size, num_workers)
         else:
@@ -598,12 +598,12 @@ class ModelTrainer:
     ):
 
         log_line(log)
-        log.info("Testing using best model ...")
+        log.info("Testing using best rpbert ...")
 
         self.model.eval()
 
-        if (base_path / "best-model.pt").exists():
-            self.model = self.model.load(base_path / "best-model.pt")
+        if (base_path / "best-rpbert.pt").exists():
+            self.model = self.model.load(base_path / "best-rpbert.pt")
 
         test_results, test_loss = self.model.evaluate(
             DataLoader(
@@ -634,7 +634,7 @@ class ModelTrainer:
                     embedding_storage_mode="none",
                 )
 
-        # get and return the final test score of best model
+        # get and return the final test score of best rpbert
         final_score = test_results.main_score
 
         return final_score

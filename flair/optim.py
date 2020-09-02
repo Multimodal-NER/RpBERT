@@ -30,10 +30,10 @@ class SGDW(Optimizer):
         https://arxiv.org/abs/1711.05101
 
     Example:
-        >>> optimizer = torch.optim.SGDW(model.parameters(), lr=0.1, momentum=0.9,
+        >>> optimizer = torch.optim.SGDW(rpbert.parameters(), lr=0.1, momentum=0.9,
                                          weight_decay=1e-5)
         >>> optimizer.zero_grad()
-        >>> loss_fn(model(input), target).backward()
+        >>> loss_fn(rpbert(input), target).backward()
         >>> optimizer.step()
 
     __ http://www.cs.toronto.edu/%7Ehinton/absps/momentum.pdf
@@ -97,7 +97,7 @@ class SGDW(Optimizer):
         """Performs a single optimization step.
 
         Arguments:
-            closure (callable, optional): A closure that reevaluates the model
+            closure (callable, optional): A closure that reevaluates the rpbert
                 and returns the loss.
         """
         loss = None
@@ -195,7 +195,7 @@ class AdamW(Optimizer):
         """Performs a single optimization step.
 
         Arguments:
-            closure (callable, optional): A closure that reevaluates the model
+            closure (callable, optional): A closure that reevaluates the rpbert
                 and returns the loss.
         """
         loss = None
@@ -324,7 +324,7 @@ class ReduceLRWDOnPlateau(ReduceLROnPlateau):
             ignored. Default: 1e-8.
 
     Example:
-        >>> optimizer = AdamW(model.parameters(), lr=0.1, weight_decay=1e-3)
+        >>> optimizer = AdamW(rpbert.parameters(), lr=0.1, weight_decay=1e-3)
         >>> scheduler = ReduceLRWDOnPlateau(optimizer, 'min')
         >>> for epoch in range(10):
         >>>     train(...)
