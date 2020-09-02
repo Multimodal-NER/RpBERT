@@ -26,10 +26,8 @@ def init_xavier(m):
 
 
 def burnin_schedule(i):
-    if i < 5:
-        factor = 1.0
-    elif i < 10:
-        factor = 0.5
+    if i < 10:
+        factor = 1
     elif i < 20:
         factor = 0.1
     else:
