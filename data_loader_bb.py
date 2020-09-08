@@ -66,7 +66,6 @@ class CustomDataSet(torch.utils.data.TensorDataset):
         input_len = np.zeros(len(batch))
         for i in range(len(batch)):
             if zero_indices[i] == -1:
-                # input_len[i] = len(x[i])
                 input_len[i] = len(y[i])
             else:
                 input_len[i] = zero_indices[i]
@@ -75,10 +74,8 @@ class CustomDataSet(torch.utils.data.TensorDataset):
         # Sort everything according to the sequence length
         x = x[sorted_input_arg]
         y = y[sorted_input_arg]
-        # img_x = img_x[sorted_input_arg]
         obj_x = obj_x[sorted_input_arg]
 
-        # mask_object = mask_object[sorted_input_arg]
         mask = mask[sorted_input_arg]
         input_len = input_len[sorted_input_arg]
         ifpairs = ifpairs[sorted_input_arg]
@@ -86,7 +83,6 @@ class CustomDataSet(torch.utils.data.TensorDataset):
         max_seq_len = int(input_len[0])
 
         trunc_x = np.zeros((len(batch), max_seq_len))
-        # trunc_x_mask = np.zeros((len(batch), max_seq_len))
         trunc_y = np.zeros((len(batch), max_seq_len))
         trunc_mask = np.zeros((len(batch), max_seq_len))
         for i in range(len(batch)):
@@ -102,8 +98,6 @@ class DataLoader:
     def __init__(self, params):
         '''
         self.x : sentence encoding with padding at word level
-        self.x_c : sentence encoding with padding at character level
-        self.x_img : image features corresponding to the sentences
         self.y : label corresponding to the words in the sentences
         :param params:
         '''
@@ -125,8 +119,6 @@ class DataLoader:
         print('calculating vocab  ulary...')
         datasplit, sentences, img_id, sent_maxlen, word_maxlen, num_sentence,  ifpairs = self.load_sentence(
             'IMGID', self.params.pre_split_file, 'textimage-data-image')
-        # print(sent_maxlen)
-        # id_to_vocb, vocb, vocb_inv, vocb_char, vocb_inv_char, labelVoc, labelVoc_inv = self.vocab_bulid(sentences)
         x, img_id, y = self.pad_sequence(sentences, img_id,
                                              word_maxlen=word_maxlen, sent_maxlen=sent_maxlen)
         return [sentences, datasplit, x,img_id, y, num_sentence,
@@ -144,11 +136,9 @@ class DataLoader:
         sentence = []
         sent_maxlen = 0
         word_maxlen = 0
-        obj_features = []
         datasplit = []
-        # mask_object = []
         ifpairs =  []
-        # img_feature = []
+
         for fname in (file_name,):
             datasplit.append(len(img_id))
             with open(os.path.join(tweet_data_dir, fname), 'r', encoding='utf-8') as file:
@@ -228,7 +218,7 @@ class DataLoader:
 
         for sentence in sentences:
             w_id = []
-            # w_mask = []
+
             for word_label in sentence:
                 w_id.append(word_label[0])
             w_id = w_id[:-1]
