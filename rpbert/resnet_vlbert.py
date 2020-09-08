@@ -54,14 +54,11 @@ class ResNetVLBERT(Module):
         box_mask = torch.ones((batch_size, 49), dtype=torch.bool, device=expression.device)
 
         text_input_ids = expression.new_zeros((expression.shape[0], expression.shape[1]))
-        # text_input_ids[:, 0] = cls_id
         text_input_ids[:, :] = expression
         _sep_pos = (text_input_ids > 0).sum(1)
         _batch_inds = torch.arange(expression.shape[0], device=expression.device)
-        # text_input_ids[_batch_inds, _sep_pos] = sep_id
         text_token_type_ids = text_input_ids.new_zeros(text_input_ids.shape)
         text_mask = text_input_ids > 0
-        # text_visual_embeddings = obj_reps['obj_reps'][:, 0].unsqueeze(1).repeat((1, text_input_ids.shape[1], 1))
         text_visual_embeddings = torch.zeros(
             (text_input_ids.shape[0], text_input_ids.shape[1], self.config.NETWORK.VLBERT.hidden_size),
             device=expression.device,
