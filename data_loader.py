@@ -30,8 +30,6 @@ class CustomDataSet(torch.utils.data.TensorDataset):
         self.params = params
         self.x = x
         self.x_flair = x_flair
-        # self.obj_x = obj_x
-        # self.mask_object = mask_object
         self.y = y
         self.img_id  = img_id
         self.s_idx = s_idx
@@ -50,9 +48,9 @@ class CustomDataSet(torch.utils.data.TensorDataset):
         image = Image.open(path)
         if image.mode != 'RGB':
             image = image.convert('RGB')
-        # print(i)
+
         image = transform(image)
-        # image = torch.unsqueeze(image, 0)
+
         obj_x = np.array(image)
 
         return x, x_flair, y, obj_x
@@ -62,18 +60,13 @@ class CustomDataSet(torch.utils.data.TensorDataset):
         x_flair = [x[1] for x in batch]
         y = np.array([x[2] for x in batch])
         obj_x = np.array([x[3] for x in batch])
-        # trunc_boxes = np.zeros((len(batch), max_boxes_len, 4), np.float)
-        # trunc_boxes[:, :, :] = -1.5
-        # for id, array in enumerate(boxes):
-        #     trunc_boxes[id, 0:len(array), :] = array
-        # mask_object = np.array([x[7] for x in batch])
-        # img_id = np.array([x[6] for x in batch])
+
         bool_mask = y == 0
         mask = 1 - bool_mask.astype(np.int)
 
         # index of first 0 in each row, if no zero then idx = -1
         zero_indices = np.where(bool_mask.any(1), bool_mask.argmax(1), -1).astype(np.int)
-        # print(zero_indices)
+
         input_len = np.zeros(len(batch))
         for i in range(len(batch)):
             if zero_indices[i] == -1:
@@ -81,49 +74,26 @@ class CustomDataSet(torch.utils.data.TensorDataset):
             else:
                 input_len[i] = zero_indices[i]
         sorted_input_arg = np.argsort(-input_len)
-        # print(input_len)
-        # print(sorted_input_arg)
-        # print(np.argsort(input_len))
-        # print(sorted_input_arg)
-        # Sort everything according to the sequence length
-        # x = x[sorted_input_arg]
-        # pre_x = pre_x[sorted_input_arg]
-        # pre_x_mask = pre_x_mask[sorted_input_arg]
-        # print(x)
-        # x = sorted(x, key=lambda i:len(i), reverse=True)
-        # print(x)
+
         x = x[sorted_input_arg]
         x_flair = sorted(x_flair, key=lambda i: len(i), reverse=True)
-        # print(pre_x)
 
-        # pre_x = sorted(pre_x, key=lambda i:len(i), reverse=True)
-        # pre_x_mask = sorted(pre_x_mask, key=lambda i:len(i), reverse=True)
-        # print('\n')
-        # print(y)
-        # print(sorted_input_arg)
         y = y[sorted_input_arg]
-        # print(y)
+
         obj_x = obj_x[sorted_input_arg]
         mask = mask[sorted_input_arg]
-        # mask_object = mask_object[sorted_input_arg]
+
         input_len = input_len[sorted_input_arg]
-        # img_id = img_id[sorted_input_arg]
 
         max_seq_len = int(input_len[0])
 
-
-        # trunc_x = np.zeros((len(batch), max_seq_len))
         trunc_x = np.zeros((len(batch), max_seq_len))
         trunc_x_flair = []
-        # trunc_pre_x = []
-        # trunc_pre_x_mask = []
+
         trunc_y = np.zeros((len(batch), max_seq_len))
         trunc_mask = np.zeros((len(batch), max_seq_len))
-        # print(len(batch))
         for i in range(len(batch)):
-            # print('max_seq_len:', max_seq_len)
-            # print('x_len:', len(x[0]))
-            # print('y:', y)
+
             trunc_x_flair.append(x_flair[i])
             trunc_x[i] = x[i, :max_seq_len]
 
@@ -137,8 +107,6 @@ class DataLoader:
     def __init__(self, params):
         '''
         self.x : sentence encoding with padding at word level
-        self.x_c : sentence encoding with padding at character level
-        self.x_img : image features corresponding to the sentences
         self.y : label corresponding to the words in the sentences
         :param params:
         '''
@@ -167,11 +135,6 @@ class DataLoader:
                                                             collate_fn=dataset_test.collate,
                                                             shuffle=False, **kwargs)
 
-        # if self.params.word2vec_model != '':
-        #     # self.word2vec_model = gensim.models.KeyedVectors.load_word2vec_format(self.params.word2vec_model)
-        #     rpbert = word2vec.Word2Vec.load(self.params.word2vec_model)
-
-
     def load_data(self):
         print('calculating vocabulary...')
 
@@ -179,8 +142,6 @@ class DataLoader:
             'IMGID', self.params.split_file, 'train', 'dev', 'test')
 
         labelVoc, labelVoc_inv = self.vocab_bulid(sentences)
-
-        # word_matrix = self.load_word_matrix(vocb, size=self.params.embedding_dimension)
 
         x, x_flair, y = self.pad_sequence(sentences, labelVoc,
                                                word_maxlen=self.params.word_maxlen, sent_maxlen=sent_maxlen)
@@ -219,7 +180,6 @@ class DataLoader:
                             sentence.append(line.split('\t'))
                             word_maxlen = max(word_maxlen, len(str(line.split()[0])))
 
-        # sentences.append(sentence)
         datasplit.append(len(img_id))
         num_sentence = len(sentences)
 
@@ -230,10 +190,6 @@ class DataLoader:
         print('word_maxlen', word_maxlen)
         print('number sentence', len(sentences))
         print('number image', len(img_id))
-        # mask_object = np.asarray(mask_object)
-        # img_id = [int(i) for i in img_id]
-        # self.params.word_maxlen = word_maxlen
-        # self.params.sent_maxlen = sent_maxlen
         return [datasplit, sentences, sent_maxlen, word_maxlen, num_sentence, img_id]
 
     def vocab_bulid(self, sentences):
@@ -302,8 +258,6 @@ class DataLoader:
 
         """
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        # print(tokenizer.vocab)
-        # print(sentences[0])
         x = []
         x_flair = []
         y = []
