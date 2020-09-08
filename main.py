@@ -22,26 +22,20 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
         description='Argument Parser for MNER')
 
-    parser.add_argument("--pre_image_features_dir", dest="pre_image_features_dir", type=str,
-                        default='/home/data/syx/twitter/twitter100k/img_feature/')
     parser.add_argument("--pre_image_obj_features_dir", dest="pre_image_obj_features_dir", type=str,
-                        default='/media/iot538/a73dbfc5-a8a0-4021-a841-3b7d7f3fd964/mnt/wfs/data/twitter100k/twitter100k_image/')
-    parser.add_argument("--pre_split_file", dest="pre_split_file", type=str, default='/home/data/syx/twitter/twitter100k/')
+                        default='datasets/smap/rel_img/')
+    parser.add_argument("--pre_split_file", dest="pre_split_file", type=str, default='datasets/smap/')
 
     # parser.add_argument("--split_file", dest="split_file", type=str,
-    #                         default='/home/data/syx/twitter/aaai/')
+    #                         default='datasets/fudan/')
     # parser.add_argument("--image_obj_features_dir", dest="image_obj_features_dir", type=str,
-    #                         default='/home/data/syx/twitter/aaai/ner_img/')
-    # parser.add_argument("--image_obj_boxes_dir", dest="image_obj_boxes_dir", type=str,
-    #                         default="/home/data/syx/twitter/aaai/boxes/")
+    #                         default='datasets/fudan/ner_img/')
+
     parser.add_argument("--split_file", dest="split_file", type=str,
-                        default='/home/data/datasets/snap/')
+                        default='datasets/snap/')
     parser.add_argument("--image_obj_features_dir", dest="image_obj_features_dir", type=str,
-                        default='/home/data/datasets/snap/ner_img/')
-    parser.add_argument("--image_obj_boxes_dir", dest="image_obj_boxes_dir", type=str,
-                        default="/home/data/datasets/snap/boxes/")
-    # parser.add_argument("--word2vec_model", dest="word2vec_model", type=str, default='/mnt/wfs/data/glove100.txt')
-    #parameters for pretrain rpbert
+                        default='datasets/snap/ner_img/')
+
     parser.add_argument("--pretrain_load", dest="pretrain_load", type=int, default=1)
     parser.add_argument("--pre_hidden_dimension", dest="pre_hidden_dimension", type=int, default=256)
     parser.add_argument("--cat_h_e", dest="cat_h_e", type=int, default=1)
@@ -87,7 +81,7 @@ def main():
     if params.pretrain_load == 1:
 
         myvlbert = ResNetVLBERT(config)
-        pretrained_bert_model = torch.load('/home/data/datasets/embeddings/bert/bert-base-uncased/pytorch_model.bin')
+        pretrained_bert_model = torch.load('pretrained/bert-base-uncased/pytorch_model.bin')
         new_state_dict = myvlbert.state_dict()
         miss_keys = []
         for k in new_state_dict.keys():
@@ -104,7 +98,6 @@ def main():
         myvlbert.load_state_dict(new_state_dict)
 
         pre_model = BertRel(params, myvlbert)
-        # pre_model.load_state_dict(pretrain['model_state_dict'])
         print('Load pretrain rpbert...[OK]')
 
     dl = DataLoader(params)

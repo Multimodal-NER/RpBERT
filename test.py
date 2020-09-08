@@ -27,28 +27,20 @@ flair.device = torch.device('cuda:%d' % device_id)
 def parse_arguments():
     parser = argparse.ArgumentParser(
         description='Argument Parser for MNER')
-    parser.add_argument("--scatter_name", dest="scatter_name", type=str, default="scatter_snap.jpg")
-    parser.add_argument("--pre_image_features_dir", dest="pre_image_features_dir", type=str,
-                        default='/home/data/syx/twitter/twitter100k/img_feature/')
     parser.add_argument("--pre_image_obj_features_dir", dest="pre_image_obj_features_dir", type=str,
-                        default='/media/iot538/a73dbfc5-a8a0-4021-a841-3b7d7f3fd964/mnt/wfs/data/twitter100k/twitter100k_image/')
-    parser.add_argument("--pre_split_file", dest="pre_split_file", type=str, default='/home/data/syx/twitter/twitter100k/')
+                        default='datasets/smap/rel_img/')
+    parser.add_argument("--pre_split_file", dest="pre_split_file", type=str, default='datasets/smap/')
 
     # parser.add_argument("--split_file", dest="split_file", type=str,
-    #                         default='/home/data/syx/twitter/aaai/')
+    #                         default='datasets/fudan/')
     # parser.add_argument("--image_obj_features_dir", dest="image_obj_features_dir", type=str,
-    #                         default='/home/data/syx/twitter/aaai/ner_img/')
-    # parser.add_argument("--image_obj_boxes_dir", dest="image_obj_boxes_dir", type=str,
-    #                         default="/home/data/syx/twitter/aaai/boxes/")
-    parser.add_argument("--split_file", dest="split_file", type=str,
-                        default='/home/data/datasets/snap/')
-    parser.add_argument("--image_obj_features_dir", dest="image_obj_features_dir", type=str,
-                        default='/home/data/datasets/snap/ner_img/')
-    parser.add_argument("--image_obj_boxes_dir", dest="image_obj_boxes_dir", type=str,
-                        default="/home/data/datasets/snap/boxes/")
-    # parser.add_argument("--word2vec_model", dest="word2vec_model", type=str, default='/mnt/wfs/data/glove100.txt')
+    #                         default='datasets/fudan/ner_img/')
 
-    #parameters for pretrain rpbert
+    parser.add_argument("--split_file", dest="split_file", type=str,
+                        default='datasets/snap/')
+    parser.add_argument("--image_obj_features_dir", dest="image_obj_features_dir", type=str,
+                        default='datasets/snap/ner_img/')
+
     parser.add_argument("--pretrain_load", dest="pretrain_load", type=int, default=1)
 
     parser.add_argument("--pre_hidden_dimension", dest="pre_hidden_dimension", type=int, default=256)
