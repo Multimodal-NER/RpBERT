@@ -1,0 +1,1 @@
+###There is flair WordEmbeddings and CharEmbeddings.

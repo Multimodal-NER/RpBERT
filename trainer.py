@@ -48,10 +48,8 @@ class Trainer:
         num_of_tags = len(self.data_loader.labelVoc)
         embedding_types = [
             WordEmbeddings(
-                '/media/iot538/a73dbfc5-a8a0-4021-a841-3b7d7f3fd964/mnt/xj/wnut17_advanced/pretrain/en-fasttext-crawl-300d-1M'),
-            CharacterEmbeddings('/home/iot538/.flair/datasets/common_characters_large'),
-            # FlairEmbeddings('/home/iot538/.flair/embeddings/news-forward-0.4.1.pt'),
-            # FlairEmbeddings('/home/iot538/.flair/embeddings/news-backward-0.4.1.pt'),
+                'pretrained/embedding/en-fasttext-crawl-300d-1M'),
+            CharacterEmbeddings('pretrained/embedding/datasets/common_characters_large'),
         ]
 
         embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)

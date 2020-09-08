@@ -35,7 +35,10 @@ datasets/
 
 ### Pre-trained Models
 ```
-pretrained_model/
+pretrained/
+├── embeddings/
+│   ├──en-fasttext-crawl-300d-1M
+│   ├──common_characters_large
 ├── bert-base-uncased/
 │   ├── vocab.txt
 │   ├── bert_config.json
