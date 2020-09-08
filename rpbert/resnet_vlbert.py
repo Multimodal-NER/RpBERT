@@ -26,18 +26,10 @@ class ResNetVLBERT(Module):
         # init weights
         self.init_weight()
 
-        # self.fix_params()
-
     def init_weight(self):
         if self.object_linguistic_embeddings is not None:
             self.object_linguistic_embeddings.weight.data.normal_(mean=0.0,
                                                                   std=self.config.NETWORK.VLBERT.initializer_range)
-
-    # def train(self, mode=True):
-    #     super(ResNetVLBERT, self).train(mode)
-    #     # turn some frozen layers to eval mode
-    #     if self.image_feature_bn_eval:
-    #         self.image_feature_extractor.bn_eval()
 
     def fix_params(self):
         for param in self.image_feature_extractor.parameters():
