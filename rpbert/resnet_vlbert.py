@@ -42,9 +42,6 @@ class ResNetVLBERT(Module):
                 expression,
                 relation=None):
 
-        ###########################################
-
-        # visual feature extraction
         batch_size = expression.shape[0]
         images = image
 
