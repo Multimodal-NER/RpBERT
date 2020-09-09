@@ -10,21 +10,6 @@ from flair.embeddings import *
 from rpbert.resnet_vlbert import ResNetVLBERT
 
 
-def init_xavier(m):
-    """
-    Sets all the linear layer weights as per xavier initialization
-    :param m:
-    :return: Nothing
-    """
-    if type(m) == torch.nn.Linear:
-        fan_in = m.weight.size()[1]
-        fan_out = m.weight.size()[0]
-        std = np.sqrt(6.0 / (fan_in + fan_out))
-        m.weight.data.normal_(0, std)
-        if m.bias is not None:
-            m.bias.data.zero_()
-
-
 def burnin_schedule(i):
     if i < 10:
         factor = 1
