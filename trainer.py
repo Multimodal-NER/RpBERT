@@ -69,9 +69,7 @@ class Trainer:
             else:
                 paras_new += [{'params': [v], 'lr': 1e-4}]
         optimizer = torch.optim.Adam(paras_new, weight_decay=self.params.wdecay)
-        # optimizer = torch.optim.SGD(ner_model.parameters(), lr=self.params.lr, momentum=0.9)
         scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, burnin_schedule)
-        # optimizer = torch.optim.Adam(ner_model.parameters(), lr=self.params.lr)
 
         try:
             prev_best = 0
