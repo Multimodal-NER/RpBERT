@@ -106,7 +106,7 @@ class Trainer:
                 torch.cuda.empty_cache()
                 # Calculate accuracy and save best rpbert
                 if (epoch + 1) % self.params.validate_every == 0:
-                
+
                     with torch.no_grad():
                         acc_dev, f1_dev, p_dev, r_dev = self.evaluator.get_accuracy(ner_model, 'test', loss_function)
 
