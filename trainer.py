@@ -7,7 +7,7 @@ from util import *
 from tqdm import tqdm
 import numpy as np
 from flair.embeddings import *
-from rpbert.resnet_vlbert import ResNetVLBERT
+
 
 
 def burnin_schedule(i):
@@ -85,7 +85,7 @@ class Trainer:
                     relation = F.softmax(pair_out, dim=-1)
 
                     optimizer.zero_grad()
-                    # relation_ = relation.detach()
+
                     # ner训练
                     emissions, attention_probs = ner_model(to_variable(x), x_flair, to_variable(x_obj),
                                           lens, to_variable(mask), relation.detach())  # seq_len * bs * labels
@@ -97,19 +97,16 @@ class Trainer:
                     loss.backward()
                     losses.append(loss.data.cpu().numpy())
 
-                    # if self.params.clip_value > 0:
-                    #     torch.nn.utils.clip_grad_norm(ner_model.parameters(), self.params.clip_value)
+
                     optimizer.step()
 
                 scheduler.step()
                 optim_state = optimizer.state_dict()
-                # optim_state['param_groups'][0]['lr'] = optim_state['param_groups'][0]['lr'] / (
-                #             1 + self.params.gamma * (epoch + 1))
-                # optimizer.load_state_dict(optim_state)
+
                 torch.cuda.empty_cache()
                 # Calculate accuracy and save best rpbert
                 if (epoch + 1) % self.params.validate_every == 0:
-                    # acc_dev, f1_dev, p_dev, r_dev = self.evaluator.get_accuracy(rpbert, 'val', loss_function)
+                
                     with torch.no_grad():
                         acc_dev, f1_dev, p_dev, r_dev = self.evaluator.get_accuracy(ner_model, 'test', loss_function)
 
