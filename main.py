@@ -1,132 +1,106 @@
 import os
 import argparse
-from mner import *
-from rpbert.bert_rel import *
-from data_loader import DataLoader
-from data_loader_bb import DataLoader as DLbb
-from evaluator import Evaluator
-from trainer import Trainer
+import json
 import random
 import numpy as np
 import torch
-import flair
-from cfgs.config import config, update_config
-from rpbert.resnet_vlbert import ResNetVLBERT
-
-device_id = 2
-torch.cuda.set_device(device_id)
-flair.device = torch.device('cuda:%d' % device_id)
+from torch.utils.data import DataLoader
+from data import loader
+from model.model import MyModel
+from utils import seed_worker, seed_everything, train, evaluate
 
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(
-        description='Argument Parser for MNER')
-
-    parser.add_argument("--pre_image_obj_features_dir", dest="pre_image_obj_features_dir", type=str,
-                        default='datasets/smap/rel_img/')
-    parser.add_argument("--pre_split_file", dest="pre_split_file", type=str, default='datasets/smap/')
-
-    # parser.add_argument("--split_file", dest="split_file", type=str,
-    #                         default='datasets/fudan/')
-    # parser.add_argument("--image_obj_features_dir", dest="image_obj_features_dir", type=str,
-    #                         default='datasets/fudan/ner_img/')
-
-    parser.add_argument("--split_file", dest="split_file", type=str,
-                        default='datasets/snap/')
-    parser.add_argument("--image_obj_features_dir", dest="image_obj_features_dir", type=str,
-                        default='datasets/snap/ner_img/')
-
-    parser.add_argument("--pretrain_load", dest="pretrain_load", type=int, default=1)
-    parser.add_argument("--pre_hidden_dimension", dest="pre_hidden_dimension", type=int, default=256)
-    parser.add_argument("--cat_h_e", dest="cat_h_e", type=int, default=1)
-
-    MODEL_DIR = '/home/data/wjq_new/ner/models_addpre/'
-    parser.add_argument("--hidden_dimension", dest="hidden_dimension", type=int, default=512)
-
-    parser.add_argument("--batch_size", dest="batch_size", type=int, default=4)
-    parser.add_argument("--lr", dest="lr", type=float, default=5e-5)
-    parser.add_argument("--dropout", dest="dropout", type=float, default=0.5)
-    parser.add_argument("--num_epochs", dest="num_epochs", type=int, default=40)
-
-    parser.add_argument("--n_layers", dest="n_layers", type=int, default=3)
-    parser.add_argument("--clip_value", dest="clip_value", type=float, default=5)
-    parser.add_argument("--wdecay", dest="wdecay", type=float, default=0.0000001)
-    parser.add_argument("--step_size", dest="step_size", type=int, default=15)
-    parser.add_argument("--gamma", dest="gamma", type=float, default=0.01)
-    parser.add_argument("--validate_every", dest="validate_every", type=int, default=1)
-    parser.add_argument("--mode", dest="mode", type=int, default=0)
-    parser.add_argument("--model_dir", dest="model_dir", type=str, default=MODEL_DIR)
-    parser.add_argument("--model_file_name", dest="model_file_name", type=str, default="model_weights.t7")
-    parser.add_argument("--sent_maxlen", dest="sent_maxlen", type=int, default=35)
-    parser.add_argument("--word_maxlen", dest="word_maxlen", type=int, default=41)
-    parser.add_argument("--regions_in_image", dest="regions_in_image", type=int, default=49)
-
-    parser.add_argument('--cfg', type=str, help='path to config file',
-                        default='cfgs/base_gt_boxes_4x16G.yaml')
-    args = parser.parse_args()
-
-    if args.cfg is not None:
-        update_config(args.cfg)
-
-    return args, config
+parser = argparse.ArgumentParser()
+parser.add_argument('--seed', type=int, default=0)
+parser.add_argument('--cuda', type=int, default=0)
+parser.add_argument('--num_workers', type=int, default=2)
+parser.add_argument('--dataset', type=str, default='twitter2017', choices=['twitter2015', 'twitter2017'])
+parser.add_argument('--encoder_t', type=str, default='bert-base-uncased',
+                    choices=['bert-base-uncased', 'bert-large-uncased'])
+parser.add_argument('--encoder_v', type=str, default='', choices=['', 'resnet101', 'resnet152'])
+parser.add_argument('--stacked', action='store_true', default=False)
+parser.add_argument('--rnn',   action='store_true',  default=False)
+parser.add_argument('--crf',   action='store_true',  default=False)
+parser.add_argument('--aux',   action='store_true',  default=False)
+parser.add_argument('--gate',   action='store_true',  default=False)
+parser.add_argument('--bs', type=int, default=16)
+parser.add_argument('--lr', type=float, default=1e-5)
+parser.add_argument('--num_epochs', type=int, default=10)
+parser.add_argument('--optim', type=str, default='Adam', choices=['Adam', 'AdamW'])
+args = parser.parse_args()
 
 
-def main():
-    params, config = parse_arguments()
-    print(config)
-    print(params)
-    print("Constructing data loaders...")
+if (args.aux or args.gate) and args.encoder_v == '':
+    raise ValueError('Invalid setting: auxiliary task or gate module must be used with visual encoder (i.e. ResNet)')
 
-    pre_model = None
-    if params.pretrain_load == 1:
+seed_everything(args.seed)
+generator = torch.Generator()
+generator.manual_seed(args.seed)
 
-        myvlbert = ResNetVLBERT(config)
-        pretrained_bert_model = torch.load('pretrained/bert-base-uncased/pytorch_model.bin')
-        new_state_dict = myvlbert.state_dict()
-        miss_keys = []
-        for k in new_state_dict.keys():
-            print(k)
-            key = k.replace('vlbert', 'bert') \
-                .replace('LayerNorm.weight', 'LayerNorm.gamma') \
-                .replace('LayerNorm.bias', 'LayerNorm.beta')
-            if key in pretrained_bert_model.keys():
-                new_state_dict[k] = pretrained_bert_model[key]
-            else:
-                miss_keys.append(k)
-        if len(miss_keys) > 0:
-            print('miss keys: {}'.format(miss_keys))
-        myvlbert.load_state_dict(new_state_dict)
+if args.num_workers > 0:
+    torch.multiprocessing.set_sharing_strategy('file_system')
+    os.environ['TOKENIZERS_PARALLELISM'] = 'true'
+ner_corpus = loader.load_ner_corpus(f'resources/datasets/{args.dataset}', load_image=(args.encoder_v != ''))
+ner_train_loader = DataLoader(ner_corpus.train, batch_size=args.bs, collate_fn=list, num_workers=args.num_workers,
+                              shuffle=True, worker_init_fn=seed_worker, generator=generator)
+ner_dev_loader = DataLoader(ner_corpus.dev, batch_size=args.bs, collate_fn=list, num_workers=args.num_workers)
+ner_test_loader = DataLoader(ner_corpus.test, batch_size=args.bs, collate_fn=list, num_workers=args.num_workers)
+if args.aux:
+    itr_corpus = loader.load_itr_corpus('resources/datasets/relationship')
+    itr_train_loader = DataLoader(itr_corpus.train, batch_size=args.bs, collate_fn=list, num_workers=args.num_workers,
+                                  shuffle=True, worker_init_fn=seed_worker, generator=generator)
+    itr_test_loader = DataLoader(itr_corpus.test, batch_size=args.bs, collate_fn=list, num_workers=args.num_workers)
 
-        pre_model = BertRel(params, myvlbert)
-        print('Load pretrain rpbert...[OK]')
+model = MyModel.from_pretrained(args)
 
-    dl = DataLoader(params)
-    dlbb = DLbb(params)
-    evaluator = Evaluator(params, dl)
-    print("Constructing data loaders...[OK]")
+params = [
+    {'params': model.encoder_t.parameters(), 'lr': args.lr},
+    {'params': model.head.parameters(), 'lr': args.lr * 100},
+]
+if args.encoder_v:
+    params.append({'params': model.encoder_v.parameters(), 'lr': args.lr})
+    params.append({'params': model.proj.parameters(), 'lr': args.lr * 100})
+if args.rnn:
+    params.append({'params': model.rnn.parameters(), 'lr': args.lr * 100})
+if args.crf:
+    params.append({'params': model.crf.parameters(), 'lr': args.lr * 100})
+if args.gate:
+    params.append({'params': model.aux_head.parameters(), 'lr': args.lr * 100})
+optimizer = getattr(torch.optim, args.optim)(params)
 
-    if params.mode == 0:
-        print("Training...")
-        t = Trainer(params, config, dl, dlbb, evaluator, pre_model)
-        t.train()
-        print("Training...[OK]")
-    elif params.mode == 1:
-        print("Loading rpbert...")
-        model = MNER(params)
-        model_file_path = os.path.join(params.model_dir, params.model_file_name)
-        model.load_state_dict(torch.load(model_file_path))
-        if torch.cuda.is_available():
-            model = model.cuda()
-        print("Loading rpbert...[OK]")
+print(args)
+dev_f1s, test_f1s = [], []
+ner_losses, itr_losses = [], []
+best_dev_f1, best_test_report = 0, None
+for epoch in range(1, args.num_epochs + 1):
+    if args.aux:
+        itr_loss = train(itr_train_loader, model, optimizer, task='itr', weight=0.05)
+        itr_losses.append(itr_loss)
+        print(f'loss of image-text relation classification at epoch#{epoch}: {itr_loss:.2f}')
 
-        print("Evaluating rpbert on test set...")
-        acc, f1, prec, rec = evaluator.get_accuracy(model, 'test')
-        print("Accuracy : {}".format(acc))
-        print("F1 : {}".format(f1))
-        print("Precision : {}".format(prec))
-        print("Recall : {}".format(rec))
-        print("Evaluating rpbert on test set...[OK]")
+    ner_loss = train(ner_train_loader, model, optimizer, task='ner')
+    ner_losses.append(ner_loss)
+    print(f'loss of multimodal named entity recognition at epoch#{epoch}: {ner_loss:.2f}')
 
+    dev_f1, dev_report = evaluate(model, ner_dev_loader)
+    dev_f1s.append(dev_f1)
+    test_f1, test_report = evaluate(model, ner_test_loader)
+    test_f1s.append(test_f1)
+    print(f'f1 score on dev set: {dev_f1:.4f}, f1 score on test set: {test_f1:.4f}')
+    if dev_f1 > best_dev_f1:
+        best_dev_f1 = dev_f1
+        best_test_report = test_report
 
-if __name__ == '__main__':
-    main()
+print()
+print(best_test_report)
+
+results = {
+    'config': vars(args),
+    'dev_f1s': dev_f1s,
+    'test_f1s': test_f1s,
+    'ner_losses': ner_losses,
+    'itr_losses': itr_losses,
+}
+file_name = f'log/{args.dataset}/bs{args.bs}_lr{args.lr}_seed{args.seed}.json'
+with open(file_name, 'w') as f:
+    json.dump(results, f, indent=4)
