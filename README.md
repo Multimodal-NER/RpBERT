@@ -8,7 +8,7 @@ This is a implementation of the paper
 * Download multi-modal NER dataset Twitter-15 [(Zhang et al., 2018)](http://qizhang.info/paper/aaai2017-twitterner.pdf)
 from [here](http://qizhang.info/paper/data/aaai2018_multimodal_NER_data.zip)
 to [this path](resources/datasets/twitter2015).
-* Download multi-modal NER dataset Twitter-17 [(Zhang et al., 2018)](http://qizhang.info/paper/aaai2017-twitterner.pdf)
+* Download multi-modal NER dataset Twitter-17 [(Lu et al., 2018)](https://aclanthology.org/P18-1185.pdf)
 to [this path](resources/datasets/twitter2017).
 * Download text-image relationship dataset [(Vempala et al., 2019)](https://aclanthology.org/P19-1272/)
 from [here](https://github.com/danielpreotiuc/text-image-relationship) to 
